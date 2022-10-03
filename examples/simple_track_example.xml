@@ -1,0 +1,14 @@
+<TrackDefinition>
+    <Size width="1000.0" height="1000.0"/>
+    <Origin x="0" y="0"/>
+    <Segments>
+        <Start x="1000" y="-2000" direction_angle="90.0"/>
+        <Straight length="1000.0"/>
+        <Crosswalk/>
+        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Straight length="1000.0"/>
+        <Intersection/>
+        <Turn direction="left" radius="1000.0" radian="90.0"/>
+        <Turn direction="right" radius="2000.0" radian="270.0"/>
+    </Segments>
+</TrackDefinition>

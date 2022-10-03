@@ -1,0 +1,36 @@
+<TrackDefinition>
+    <Size width="1000.0" height="1000.0"/>
+    <Origin x="0" y="0"/>
+    <Segments>
+        <Start x="1000" y="-2000" direction_angle="90.0"/>
+        <Straight length="6140.0"/>
+        <Crosswalk/>
+        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Straight length="6000.0"/>
+        <Turn direction="right" radius="750.0" radian="180.0"/>
+        <Straight length="800.0"/>
+        <Crosswalk/>
+        <Straight length="800.0"/>
+        <Turn direction="left" radius="750.0" radian="180.0"/>
+        <Straight length="2000.0"/>
+        <Turn direction="right" radius="1000.0" radian="135.0"/>
+        <Straight length="1000.0"/>
+        <Intersection/>
+        <Straight length="1000.0"/>
+        <Turn direction="right" radius="1000.0" radian="45.0"/>
+        <Straight length="2000.0"/>
+        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Straight length="1000.0"/>
+        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Crosswalk/>
+        <Straight length="1730.0"/>
+        <Turn direction="right" radius="1000.0" radian="45.0"/>
+        <Straight length="820.0"/>
+        <Gap length="1600.0"/>
+        <Straight length="1000.0"/>
+        <Turn direction="right" radius="1000.0" radian="135.0"/>
+        <Straight length="6000.0"/>
+        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Straight length="500.0"/>
+    </Segments>
+</TrackDefinition>

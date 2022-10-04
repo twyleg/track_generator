@@ -9,9 +9,7 @@ from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Inters
 
 class Painter:
 
-    def __init__(self, track_name: str, output_directory: str):
-        self.track_name = track_name
-        self.output_directory = output_directory
+    def __init__(self):
         self.d: Optional[draw.Drawing] = None
 
     def draw_arc(self, segment: Arc):
@@ -93,9 +91,11 @@ class Painter:
         for segment in track.segments:
             self.draw_segment(segment)
 
-        output_file_path = os.path.join(self.output_directory, self.track_name)
-
+    def save_svg(self, track_name: str, output_directory: str):
+        output_file_path = os.path.join(output_directory, track_name)
         self.d.saveSvg(f'{output_file_path}.svg')
 
-        # self.d.setPixelScale(1)
-        # self.d.savePng(f'{output_file_path}.png')
+    def save_png(self, track_name: str, output_directory: str):
+        output_file_path = os.path.join(output_directory, track_name)
+        self.d.setPixelScale(1)
+        self.d.savePng(f'{output_file_path}.png')

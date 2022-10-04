@@ -33,11 +33,14 @@ class Generator:
             output_directory = os.path.join(args.output, track.name)
             self.create_output_directory_if_required(output_directory)
 
-            painter = Painter(track.name, output_directory)
+            painter = Painter()
             painter.draw_track(track)
+            painter.save_svg(track.name, output_directory)
 
             gazebo_model_generator = GazeboModelGenerator(output_directory)
             gazebo_model_generator.generate_gazebo_model(track)
+
+            painter.save_png(track.name, gazebo_model_generator.track_materials_textures_directory)
 
     def generate_trajectory(self):
         print('generate_trajectory')

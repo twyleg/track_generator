@@ -1,0 +1,10 @@
+<model>
+	<name>${name}</name>
+	<version>${version}</version>
+	<sdf version="1.4">model.sdf</sdf>
+
+	<description>
+		${desc}
+	</description>
+
+</model>

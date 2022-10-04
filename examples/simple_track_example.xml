@@ -2,6 +2,7 @@
     <Meta name="simple_track_example" version="0.0.1"/>
     <Size width="5000.0" height="5000.0"/>
     <Origin x="0" y="0"/>
+    <Background color="#545454" opacity="1.0"/>
     <Segments>
         <Start x="500" y="-500" direction_angle="90.0"/>
         <Straight length="500.0"/>

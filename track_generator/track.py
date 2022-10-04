@@ -5,13 +5,16 @@ from typing import Any, List, Tuple, Optional
 
 
 class Track:
-    def __init__(self, name: str, version: str, width: float, height: float, origin: Tuple[float, float], segments: List[Any]):
+    def __init__(self, name: str, version: str, width: float, height: float, origin: Tuple[float, float],
+                 background_color: str, background_opacity: float, segments: List[Any]):
         self.name = name
         self.version = version
-        self.segments = segments
         self.width = width
         self.height = height
         self.origin = origin
+        self.background_color = background_color
+        self.background_opacity = background_opacity
+        self.segments = segments
 
     def calc(self):
         for i in range(len(self.segments)):

@@ -30,10 +30,11 @@
      inkscape:zoom="1.5699999"
      inkscape:cx="240.44585"
      inkscape:cy="199.36307"
-     inkscape:window-x="0"
-     inkscape:window-y="18"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg943" />
+     inkscape:window-x="2560"
+     inkscape:window-y="1098"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg943"
+     inkscape:document-rotation="0" />
   <defs
      id="defs937" />
   <metadata
@@ -107,11 +108,4 @@
        d="M 24.271703,91.694504 V 197.52784"
        id="path1508-2-1" />
   </g>
-  <rect
-     style="fill:#ff0000;stroke:none;stroke-width:10.5833;stroke-linejoin:round;paint-order:markers fill stroke;fill-opacity:1"
-     id="rect2367"
-     width="31.10623"
-     height="10.578539"
-     x="97.138901"
-     y="4.1618662" />
 </svg>

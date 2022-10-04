@@ -32,9 +32,11 @@ class XmlReader:
         name, version = self._read_meta(root)
         width, height = self._read_size(root)
         x, y = self._read_origin(root)
+        background_color, background_opacity = self._read_background(root)
         segments = self._read_segments(root)
 
-        return Track(name, version, width, height, (x, y), segments)
+
+        return Track(name, version, width, height, (x, y), background_color, background_opacity, segments)
 
     def _read_meta(self, root: ET.Element) -> Tuple[str, str]:
         meta_element = root.find('Meta')
@@ -87,6 +89,24 @@ class XmlReader:
             raise AttributeMissingException('y', origin_element)
 
         return float(x), float(y)
+
+    def _read_background(self, root: ET.Element) -> Tuple[str, float]:
+
+        background_element = root.find('Background')
+
+        if background_element is None:
+            raise ElementMissingException('Background', root)
+
+        color = background_element.get('color')
+        opacity = background_element.get('opacity')
+
+        if color is None:
+            raise AttributeMissingException('color', background_element)
+
+        if opacity is None:
+            raise AttributeMissingException('opacity', background_element)
+
+        return color, float(opacity)
 
     def _read_segments(self, root: ET.Element):
 

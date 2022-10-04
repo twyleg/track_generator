@@ -55,12 +55,12 @@ class Painter:
 
     def draw_crosswalk(self, segment: Crosswalk):
         full_template_file_path = os.path.join(pathlib.Path(__file__).parent.absolute(),
-                                               'element_templates/crosswalk.svg')
+                                               'segment_templates/crosswalk.svg')
         self.draw_template_based_segment(segment, full_template_file_path)
 
     def draw_intersection(self, segment: Intersection):
         full_template_file_path = os.path.join(pathlib.Path(__file__).parent.absolute(),
-                                               'element_templates/intersection.svg')
+                                               'segment_templates/intersection.svg')
         self.draw_template_based_segment(segment, full_template_file_path)
     
     def draw_template_based_segment(self, segment, template_file_path: str):
@@ -88,6 +88,8 @@ class Painter:
 
     def draw_track(self, track: Track):
         self.d = draw.Drawing(track.width, track.height, origin=track.origin, displayInline=False)
+        self.d.append(draw.Rectangle(0, 0, track.width, track.height, fill=track.background_color,
+                                     fill_opacity=track.background_opacity))
         for segment in track.segments:
             self.draw_segment(segment)
 

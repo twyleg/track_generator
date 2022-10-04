@@ -1,2 +1,2 @@
 include VERSION.txt
-include track_generator/element_templates/*.svg
+include track_generator/segment_templates/*.svg

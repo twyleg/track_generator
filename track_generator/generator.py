@@ -23,6 +23,10 @@ class Generator:
                             help='a track file (XML) to generate the track from')
         parser.add_argument('-o', '--output', dest='output', default=os.path.join(os.getcwd(), 'output'),
                             help='Output directory for generated tracks. Default="./"')
+        parser.add_argument('--png', action='store_true',
+                            help='Generate output PNG (SVG only by default).')
+        parser.add_argument('--gazebo', action='store_true',
+                            help='Generate Gazebo model for track.')
         args = parser.parse_args(sys.argv[2:])
 
         for track_file in args.track_files:
@@ -36,11 +40,14 @@ class Generator:
             painter = Painter()
             painter.draw_track(track)
             painter.save_svg(track.name, output_directory)
+            if args.png:
+                painter.save_png(track.name, output_directory)
 
-            gazebo_model_generator = GazeboModelGenerator(output_directory)
-            gazebo_model_generator.generate_gazebo_model(track)
+            if args.gazebo:
+                gazebo_model_generator = GazeboModelGenerator(output_directory)
+                gazebo_model_generator.generate_gazebo_model(track)
 
-            painter.save_png(track.name, gazebo_model_generator.track_materials_textures_directory)
+                painter.save_png(track.name, gazebo_model_generator.track_materials_textures_directory)
 
     def generate_trajectory(self):
         print('generate_trajectory')

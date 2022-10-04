@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from track import *
+from track_generator.track import *
 
 
 class ElementMissingException(Exception):
@@ -29,12 +29,28 @@ class XmlReader:
         tree = ET.parse(self.xml_input_file_path)
         root = tree.getroot()
 
+        name, version = self._read_meta(root)
         width, height = self._read_size(root)
         x, y = self._read_origin(root)
         segments = self._read_segments(root)
 
-        return Track(width, height, (x, y), segments)
+        return Track(name, version, width, height, (x, y), segments)
 
+    def _read_meta(self, root: ET.Element) -> Tuple[str, str]:
+        meta_element = root.find('Meta')
+
+        if meta_element is None:
+            raise ElementMissingException('Meta', root)
+
+        name = meta_element.get('name')
+        version = meta_element.get('version')
+
+        if name is None:
+            raise AttributeMissingException('name', meta_element)
+        elif version is None:
+            raise AttributeMissingException('version', meta_element)
+
+        return name, version
 
     def _read_size(self, root: ET.Element) -> Tuple[float, float]:
 

@@ -1,5 +1,6 @@
 <TrackDefinition>
-    <Size width="1000.0" height="1000.0"/>
+    <Meta name="simple_track_example" version="0.0.1"/>
+    <Size width="10000.0" height="10000.0"/>
     <Origin x="0" y="0"/>
     <Segments>
         <Start x="1000" y="-2000" direction_angle="90.0"/>

@@ -1,2 +1,3 @@
 include VERSION.txt
 include track_generator/segment_templates/*.svg
+include track_generator/gazebo_model_templates/*.template

@@ -50,7 +50,7 @@ class Generator:
                 painter.save_png(track.name, gazebo_model_generator.track_materials_textures_directory)
 
     def generate_trajectory(self):
-        print('generate_trajectory')
+        print('generate_trajectory not implemented yet')
 
     def create_output_directory_if_required(self, output_directory):
         os.makedirs(output_directory, exist_ok=True)

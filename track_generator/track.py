@@ -37,7 +37,7 @@ class Start:
 
     def calc(self):
         t = np.array([self.ex, self.ey, 0.0])
-        r = np.array([0.0, 0.0, -1.0, np.deg2rad(self.direction_angle)])
+        r = np.array([0.0, 0.0, 1.0, np.deg2rad(self.direction_angle)])
         self.endpoint_to_world = pytr.transform_from(pyrot.matrix_from_axis_angle(r), t)
 
 
@@ -104,10 +104,10 @@ class Straight:
 
 
 class Arc:
-    def __init__(self, radius: float, angle: float):
+    def __init__(self, radius: float, radian_angle: float, cw: bool):
         self.radius = radius
-        self.angle = angle
-        self.cw: Optional[bool] = None
+        self.radian_angle = radian_angle
+        self.cw = cw
         self.start_direction_angle: Optional[float] = None
         self.direction_angle: Optional[float] = None
         self.sx: Optional[float] = None
@@ -121,17 +121,20 @@ class Arc:
         self.center_to_world = None
 
     def __str__(self) -> str:
-        return f'Arc: sx={self.sx}, sy={self.sy}, ex={self.ex}, ey={self.ey}, cx={self.cx}, cy={self.cy}, start_direction_angle={self.start_direction_angle}, direction_angle={self.direction_angle}, cw={self.cw}, angle={self.angle}, radius={self.radius}'
+        return f'Arc: sx={self.sx}, sy={self.sy}, ex={self.ex}, ey={self.ey}, cx={self.cx}, cy={self.cy}, start_direction_angle={self.start_direction_angle}, direction_angle={self.direction_angle}, cw={self.cw}, angle={self.radian_angle}, radius={self.radius}'
 
     def calc(self, prev_segment):
         startpoint_to_world = prev_segment.endpoint_to_world
 
-        p = np.array([0.0, self.radius, 0.0])
+        signed_radian_angle = -self.radian_angle if self.cw else self.radian_angle
+        center_offset = -self.radius if self.cw else self.radius
+
+        p = np.array([0.0, -center_offset, 0.0])
         a = np.array([0.0, 0.0, 1.0, 0.0])
         startpoint_to_center = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
 
-        p = np.array([0.0, -self.radius, 0.0])
-        a = np.array([0.0, 0.0, -1.0, np.deg2rad(self.angle if self.radius > 0 else -self.angle)])
+        p = np.array([0.0, center_offset, 0.0])
+        a = np.array([0.0, 0.0, 1.0, np.deg2rad(signed_radian_angle)])
         center_to_endpoint = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
 
         endpoint_to_startpoint = pytr.concat(startpoint_to_center, center_to_endpoint)
@@ -155,12 +158,7 @@ class Arc:
         self.endpoint_to_world = endpoint_to_world
         self.center_to_world = center_to_world
         self.start_direction_angle = prev_segment.direction_angle
-        self.direction_angle = None
-        self.cw = self.radius < 0
-        if self.cw:
-            self.direction_angle = (prev_segment.direction_angle - self.angle)
-        else:
-            self.direction_angle = (prev_segment.direction_angle + self.angle)
+        self.direction_angle = prev_segment.direction_angle + signed_radian_angle
 
 
 class TemplateBasedElement:

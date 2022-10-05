@@ -14,11 +14,15 @@ setup(
     description=("Track generator"),
     license="GPL 3.0",
     keywords="svg model vehicles track",
-    url="https://github.com/twyleg/",
+    url="https://github.com/twyleg/track_generator",
     packages=find_packages(),
     include_package_data=True,
     long_description=read('README.md'),
-    install_requires=[],
+    install_requires=[
+        'pytransform3d',
+        'numpy',
+        'drawSvg'
+    ],
     entry_points={
         'console_scripts': [
             'track_generator = track_generator.generator:run',

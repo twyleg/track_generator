@@ -167,10 +167,9 @@ class XmlReader:
         elif radian is None:
             raise AttributeMissingException('radian', turn_element)
 
-        if direction == 'right':
-            radius = -float(radius)
+        cw = True if direction == 'right' else False
 
-        return Arc(float(radius), float(radian))
+        return Arc(float(radius), float(radian), cw)
 
     def _read_crosswalk_element(self, crosswalk_element: ET.Element):
         return Crosswalk()

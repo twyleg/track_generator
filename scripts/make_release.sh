@@ -1,19 +1,19 @@
 #!/bin/bash
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR/..
 
-VERSION=$1
+NEW_VERSION=$1
+OLD_VERSION=`cat VERSION.txt`
 
-echo $VERSION
-
-if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-	echo ERROR: Wrong version format \"$VERSION\". X.Y.Z expcted.
+if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	echo ERROR: Wrong version format \"$NEW_VERSION\". \"X.Y.Z\" expected.
 	exit -1
 fi
 
 if [[ `git status -s | wc -l` -ne 0 ]]; then
 	echo ERROR: Git repository has uncommited changes. Please commit \& push them or stash them before preceeding.
-	# exit -2
+	exit -2
 fi
 
 if [[ `git branch --show-current` != "master" ]]; then
@@ -21,16 +21,31 @@ if [[ `git branch --show-current` != "master" ]]; then
 	exit -3
 fi
 
-echo "Bumping VERSION.txt to $VERSION"
-echo $VERSION > $SCRIPT_DIR/../VERSION.txt
+echo "Releasing version $NEW_VERSION (previous version $OLD_VERSION"
+echo -n "Proceed (y/n)? "
 
-echo "Creating RELEASE commit for version $VERSION"
-git add ..
-git commit -m "RELEASE of version $VERRSION"
+read ANSWER
 
-VERSION_TAG=v$VERSION
+if [[ $ANSWER != "y" ]]; then
+	echo Aborting...
+	exit 0
+fi
+
+echo "Bumping VERSION.txt from $OLD_VERSION to $NEW_VERSION"
+echo $NEW_VERSION > VERSION.txt
+
+echo "Creating RELEASE commit for version $NEW_VERSION"
+git add VERSION.txt
+git commit -m "RELEASE of version $NEW_VERSION"
+
+VERSION_TAG=v$NEW_VERSION
 echo "Creating tag \"$VERSION_TAG\""
 git tag $VERSION_TAG
 
 echo "Pushing master branch and tag to origin"
-# git push origin master $VERSION_TAG
+git push origin master $VERSION_TAG
+
+echo "Build package and push to PyPi"
+source venv/bin/activate.bash
+python setup.py sdist bdist_wheel
+python -m twine upload dist/*

@@ -33,6 +33,6 @@
         <Turn direction="right" radius="1000.0" radian="135.0"/>
         <Straight length="6000.0"/>
         <Turn direction="right" radius="1000.0" radian="90.0"/>
-        <Straight length="500.0"/>
+        <Straight length="420.0"/>
     </Segments>
 </TrackDefinition>

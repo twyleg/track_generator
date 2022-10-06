@@ -163,7 +163,7 @@ class Painter:
 
     def save_svg(self, track_name: str, output_directory: str, file_name_postfix: str = ''):
         output_file_path = os.path.join(output_directory, track_name)
-        self.d.saveSvg(f'{output_file_path}_{file_name_postfix}.svg')
+        self.d.saveSvg(f'{output_file_path}{file_name_postfix}.svg')
 
     def save_png(self, track_name: str, output_directory: str):
         output_file_path = os.path.join(output_directory, track_name)

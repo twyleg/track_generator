@@ -4,6 +4,15 @@ import pytransform3d.transformations as pytr
 from typing import Any, List, Tuple, Optional
 
 
+class Point2d:
+    def __init__(self, x: Optional[float] = None, y: Optional[float] = None):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return f'({self.x},{self.y})'
+
+
 class Track:
     def __init__(self, name: str, version: str, width: float, height: float, origin: Tuple[float, float],
                  background_color: str, background_opacity: float, segments: List[Any]):
@@ -27,16 +36,15 @@ class Track:
 
 class Start:
     def __init__(self, x: float, y: float, direction_angle: float):
-        self.ex = x
-        self.ey = y
+        self.ep = Point2d(x, y)
         self.direction_angle = direction_angle
         self.endpoint_to_world = None
 
     def __str__(self) -> str:
-        return f'Start: ex={self.ex}, ey={self.ey}, direction_angle={self.direction_angle}'
+        return f'Start: ep={self.ep}, direction_angle={self.direction_angle}'
 
     def calc(self):
-        t = np.array([self.ex, self.ey, 0.0])
+        t = np.array([self.ep.x, self.ep.y, 0.0])
         r = np.array([0.0, 0.0, 1.0, np.deg2rad(self.direction_angle)])
         self.endpoint_to_world = pytr.transform_from(pyrot.matrix_from_axis_angle(r), t)
 
@@ -45,26 +53,20 @@ class Straight:
     def __init__(self, length: float):
         self.length = length
         self.direction_angle: Optional[float] = None
-        self.sx: Optional[float] = None
-        self.sy: Optional[float] = None
-        self.ex: Optional[float] = None
-        self.ey: Optional[float] = None
 
-        self.slx: Optional[float] = None
-        self.sly: Optional[float] = None
-        self.elx: Optional[float] = None
-        self.ely: Optional[float] = None
+        self.sp: Optional[Point2d] = None
+        self.slp: Optional[Point2d] = None
+        self.srp: Optional[Point2d] = None
 
-        self.srx: Optional[float] = None
-        self.sry: Optional[float] = None
-        self.erx: Optional[float] = None
-        self.ery: Optional[float] = None
+        self.ep: Optional[Point2d] = None
+        self.elp: Optional[Point2d] = None
+        self.erp: Optional[Point2d] = None
 
         self.startpoint_to_world = None
         self.endpoint_to_world = None
 
     def __str__(self) -> str:
-        return f'Straight: sx={self.sx}, sy={self.sy}, ex={self.ex}, ey={self.ey}, length={self.length}, direction_angle={self.direction_angle}'
+        return f'Straight: sp={self.sp}, ep={self.ep}, length={self.length}, direction_angle={self.direction_angle}'
 
     def calc(self, prev_segment):
         startpoint_to_world = prev_segment.endpoint_to_world
@@ -74,29 +76,23 @@ class Straight:
         endpoint_to_startpoint = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
         endpoint_to_world = pytr.concat(endpoint_to_startpoint, startpoint_to_world)
 
-        element_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sx = element_startpoint[0]
-        self.sy = element_startpoint[1]
+        segment_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sp = Point2d(segment_startpoint[0], segment_startpoint[1])
 
-        element_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
-        self.slx = element_left_startpoint[0]
-        self.sly = element_left_startpoint[1]
+        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        self.slp = Point2d(segment_left_startpoint[0], segment_left_startpoint[1])
 
-        element_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
-        self.srx = element_right_startpoint[0]
-        self.sry = element_right_startpoint[1]
+        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        self.srp = Point2d(segment_right_startpoint[0], segment_right_startpoint[1])
 
-        element_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.ex = element_endpoint[0]
-        self.ey = element_endpoint[1]
+        segment_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.ep = Point2d(segment_endpoint[0], segment_endpoint[1])
 
-        element_left_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
-        self.elx = element_left_endpoint[0]
-        self.ely = element_left_endpoint[1]
+        segment_left_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        self.elp = Point2d(segment_left_endpoint[0], segment_left_endpoint[1])
 
-        element_right_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
-        self.erx = element_right_endpoint[0]
-        self.ery = element_right_endpoint[1]
+        segment_right_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        self.erp = Point2d(segment_right_endpoint[0], segment_right_endpoint[1])
 
         self.startpoint_to_world = startpoint_to_world
         self.endpoint_to_world = endpoint_to_world
@@ -110,18 +106,18 @@ class Arc:
         self.cw = cw
         self.start_direction_angle: Optional[float] = None
         self.direction_angle: Optional[float] = None
-        self.sx: Optional[float] = None
-        self.sy: Optional[float] = None
-        self.ex: Optional[float] = None
-        self.ey: Optional[float] = None
-        self.cx: Optional[float] = None
-        self.cy: Optional[float] = None
+        self.sp: Optional[Point2d] = None
+        self.slp: Optional[Point2d] = None
+        self.srp: Optional[Point2d] = None
+        self.ep: Optional[Point2d] = None
+        self.cp: Optional[Point2d] = None
+
         self.startpoint_to_world = None
         self.endpoint_to_world = None
         self.center_to_world = None
 
     def __str__(self) -> str:
-        return f'Arc: sx={self.sx}, sy={self.sy}, ex={self.ex}, ey={self.ey}, cx={self.cx}, cy={self.cy}, start_direction_angle={self.start_direction_angle}, direction_angle={self.direction_angle}, cw={self.cw}, angle={self.radian_angle}, radius={self.radius}'
+        return f'Arc: sp={self.sp}, ep={self.ep}, cp={self.cp}, start_direction_angle={self.start_direction_angle}, direction_angle={self.direction_angle}, cw={self.cw}, angle={self.radian_angle}, radius={self.radius}'
 
     def calc(self, prev_segment):
         startpoint_to_world = prev_segment.endpoint_to_world
@@ -142,17 +138,20 @@ class Arc:
 
         center_to_world = pytr.concat(center_to_endpoint, endpoint_to_world)
 
-        element_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sx = element_startpoint[0]
-        self.sy = element_startpoint[1]
+        segment_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sp = Point2d(segment_startpoint[0], segment_startpoint[1])
 
-        element_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.ex = element_endpoint[0]
-        self.ey = element_endpoint[1]
+        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        self.slp = Point2d(segment_left_startpoint[0], segment_left_startpoint[1])
 
-        element_center = pytr.transform(center_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.cx = element_center[0]
-        self.cy = element_center[1]
+        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        self.srp = Point2d(segment_right_startpoint[0], segment_right_startpoint[1])
+
+        segment_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.ep = Point2d(segment_endpoint[0], segment_endpoint[1])
+
+        segment_center = pytr.transform(center_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.cp = Point2d(segment_center[0], segment_center[1])
 
         self.startpoint_to_world = startpoint_to_world
         self.endpoint_to_world = endpoint_to_world
@@ -167,16 +166,14 @@ class TemplateBasedElement:
         self.width = width
         self.height = height
         self.direction_angle: Optional[float] = None
-        self.sx: Optional[float] = None
-        self.sy: Optional[float] = None
-        self.ex: Optional[float] = None
-        self.ey: Optional[float] = None
+        self.sp: Optional[Point2d] = None
+        self.ep: Optional[Point2d] = None
 
         self.startpoint_to_world = None
         self.endpoint_to_world = None
 
     def __str__(self) -> str:
-        return f'TemplateBasedElement: sx={self.sx}, sy={self.sy}, ex={self.ex}, ey={self.ey}, direction_angle={self.direction_angle}, length={self.length}'
+        return f'TemplateBasedElement: sp={self.sp}, ep={self.ep}, direction_angle={self.direction_angle}, length={self.length}'
 
     def calc(self, prev_segment):
         startpoint_to_world = prev_segment.endpoint_to_world
@@ -186,13 +183,11 @@ class TemplateBasedElement:
         endpoint_to_startpoint = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
         endpoint_to_world = pytr.concat(endpoint_to_startpoint, startpoint_to_world)
 
-        element_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.sx = element_startpoint[0]
-        self.sy = element_startpoint[1]
+        segment_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.sp = Point2d(segment_startpoint[0], segment_startpoint[1])
 
-        element_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
-        self.ex = element_endpoint[0]
-        self.ey = element_endpoint[1]
+        segment_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
+        self.ep = Point2d(segment_endpoint[0], segment_endpoint[1])
 
         self.startpoint_to_world = startpoint_to_world
         self.endpoint_to_world = endpoint_to_world

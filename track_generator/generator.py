@@ -49,6 +49,9 @@ class Generator:
 
                 painter.save_png(track.name, gazebo_model_generator.track_materials_textures_directory)
 
+            painter.draw_track_verbose(track)
+            painter.save_svg(track.name, output_directory, file_name_postfix='verbose')
+
     def generate_trajectory(self):
         print('generate_trajectory not implemented yet')
 

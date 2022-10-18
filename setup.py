@@ -26,7 +26,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'track_generator = track_generator.starter:run',
+            'track_generator = track_generator.starter:start',
         ]
     }
 )

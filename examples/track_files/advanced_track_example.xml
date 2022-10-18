@@ -1,37 +1,37 @@
 <TrackDefinition version="0.0.1">
-    <Size width="10000.0" height="10000.0"/>
+    <Size width="10.0" height="10.0"/>
     <Origin x="0" y="0"/>
     <Background color="#545454" opacity="1.0"/>
     <Segments>
-        <Start x="1000" y="2000" direction_angle="90.0"/>
-        <Straight length="6140.0"/>
+        <Start x="1.0" y="2.0" direction_angle="90.0"/>
+        <Straight length="6.140"/>
         <Crosswalk/>
-        <Turn direction="right" radius="1000.0" radian="90.0"/>
-        <Straight length="6000.0"/>
-        <Turn direction="right" radius="750.0" radian="180.0"/>
-        <Straight length="800.0"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="6.0"/>
+        <Turn direction="right" radius="0.750" radian="180"/>
+        <Straight length="0.800"/>
         <Crosswalk/>
-        <Straight length="800.0"/>
-        <Turn direction="left" radius="750.0" radian="180.0"/>
-        <Straight length="2000.0"/>
-        <Turn direction="right" radius="1000.0" radian="135.0"/>
-        <Straight length="1000.0"/>
+        <Straight length="0.800"/>
+        <Turn direction="left" radius="0.750" radian="180"/>
+        <Straight length="2.0"/>
+        <Turn direction="right" radius="1.0" radian="135.0"/>
+        <Straight length="1.0"/>
         <Intersection/>
-        <Straight length="1000.0"/>
-        <Turn direction="right" radius="1000.0" radian="45.0"/>
-        <Straight length="2000.0"/>
-        <Turn direction="right" radius="1000.0" radian="90.0"/>
-        <Straight length="1000.0"/>
-        <Turn direction="right" radius="1000.0" radian="90.0"/>
+        <Straight length="1.0"/>
+        <Turn direction="right" radius="1.0" radian="45.0"/>
+        <Straight length="2.0"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="1.0"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
         <Crosswalk/>
-        <Straight length="1730.0"/>
-        <Turn direction="right" radius="1000.0" radian="45.0"/>
-        <Straight length="820.0"/>
-        <Gap length="1600.0"/>
-        <Straight length="1000.0"/>
-        <Turn direction="right" radius="1000.0" radian="135.0"/>
-        <Straight length="6000.0"/>
-        <Turn direction="right" radius="1000.0" radian="90.0"/>
-        <Straight length="420.0"/>
+        <Straight length="1.730"/>
+        <Turn direction="right" radius="1.0" radian="45.0"/>
+        <Straight length="0.820"/>
+        <Gap length="1.600"/>
+        <Straight length="1.0"/>
+        <Turn direction="right" radius="1.0" radian="135.0"/>
+        <Straight length="6.0"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="0.420"/>
     </Segments>
 </TrackDefinition>

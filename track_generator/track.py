@@ -4,6 +4,9 @@ import pytransform3d.rotations as pyrot
 import pytransform3d.transformations as pytr
 from typing import Any, List, Tuple, Optional
 
+LINE_WIDTH = 0.020
+TRACK_WIDTH = 0.800
+LINE_OFFSET = (TRACK_WIDTH / 2) - LINE_WIDTH
 
 class Point2d:
     def __init__(self, x: Optional[float] = None, y: Optional[float] = None):
@@ -79,19 +82,19 @@ class Straight:
         segment_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sp = Point2d(segment_startpoint[0], segment_startpoint[1])
 
-        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -LINE_OFFSET, 0.0, 1.0]))
         self.slp = Point2d(segment_left_startpoint[0], segment_left_startpoint[1])
 
-        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, LINE_OFFSET, 0.0, 1.0]))
         self.srp = Point2d(segment_right_startpoint[0], segment_right_startpoint[1])
 
         segment_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
         self.ep = Point2d(segment_endpoint[0], segment_endpoint[1])
 
-        segment_left_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        segment_left_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, -LINE_OFFSET, 0.0, 1.0]))
         self.elp = Point2d(segment_left_endpoint[0], segment_left_endpoint[1])
 
-        segment_right_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        segment_right_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, LINE_OFFSET, 0.0, 1.0]))
         self.erp = Point2d(segment_right_endpoint[0], segment_right_endpoint[1])
 
         self.startpoint_to_world = startpoint_to_world
@@ -141,10 +144,10 @@ class Arc:
         segment_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
         self.sp = Point2d(segment_startpoint[0], segment_startpoint[1])
 
-        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -380.0, 0.0, 1.0]))
+        segment_left_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, -LINE_OFFSET, 0.0, 1.0]))
         self.slp = Point2d(segment_left_startpoint[0], segment_left_startpoint[1])
 
-        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, 380.0, 0.0, 1.0]))
+        segment_right_startpoint = pytr.transform(startpoint_to_world, np.array([0.0, LINE_OFFSET, 0.0, 1.0]))
         self.srp = Point2d(segment_right_startpoint[0], segment_right_startpoint[1])
 
         segment_endpoint = pytr.transform(endpoint_to_world, np.array([0.0, 0.0, 0.0, 1.0]))
@@ -196,12 +199,12 @@ class TemplateBasedElement:
 
 class Crosswalk(TemplateBasedElement):
     def __init__(self):
-        super().__init__(400, 800, 400)
+        super().__init__(0.400, 0.800, 0.400)
 
 
 class Intersection(TemplateBasedElement):
     def __init__(self):
-        super().__init__(1600, 1600, 1600)
+        super().__init__(1.600, 1.600, 1.600)
 
 
 class Gap(TemplateBasedElement):

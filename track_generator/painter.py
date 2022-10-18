@@ -7,6 +7,8 @@ import drawSvg as draw
 from typing import Optional
 from track_generator.track import Point2d, Track, Start, Straight, Arc, Crosswalk, Intersection, Gap
 
+DEFAULT_LINE_WIDTH = 0.020
+DEFAULT_TRACK_WIDTH = 0.800
 
 class Painter:
 
@@ -16,18 +18,18 @@ class Painter:
     def draw_point(self, p: Point2d):
         self.d.append(draw.Circle(p.x,
                                   p.y,
-                                  10,
+                                  0.010,
                                   fill='red', stroke_width=0, stroke='black'))
 
-        self.d.append(draw.Text(f'({int(p.x)},{int(p.y)})', 64, p.x + 32, p.y, fill='red'))
+        self.d.append(draw.Text(f'({int(p.x)},{int(p.y)})', 0.1, p.x + 0.032, p.y, fill='red'))
 
     def draw_arc_center_point(self, p: Point2d, radian_angle, radius):
         self.d.append(draw.Circle(p.x,
                                   p.y,
-                                  10,
+                                  0.010,
                                   fill='red', stroke_width=0, stroke='black'))
 
-        self.d.append(draw.Text(f'({int(p.x)},{int(p.y)})\nr={int(radius)}\na={int(radian_angle)}°', 64, p.x + 32, p.y, fill='red'))
+        self.d.append(draw.Text(f'({int(p.x)},{int(p.y)})\nr={int(radius)}\na={int(radian_angle)}°', 0.1, p.x + 0.032, p.y, fill='red'))
 
     def draw_start_verbose(self, segment: Start):
         self.draw_point(segment.sp)
@@ -39,17 +41,18 @@ class Painter:
                             segment.ep.x, segment.ep.y,
                             fill='#eeee00',
                             stroke='black',
-                            stroke_width=800.0))
+                            stroke_width=DEFAULT_TRACK_WIDTH))
 
         self.d.append(draw.Line(segment.sp.x, segment.sp.y, segment.ep.x, segment.ep.y,
-                            stroke='white', stroke_width=20.0, fill='none',
-                            style="stroke-miterlimit:4;stroke-dasharray:160,160;stroke-dashoffset:0"))
+                            stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+                            style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0"))
+        # stroke-miterlimit:4;stroke-dasharray:0.08,0.16;stroke-dashoffset:0;stroke-width:0.02
 
         self.d.append(draw.Line(segment.slp.x, segment.slp.y, segment.elp.x, segment.elp.y,
-                            stroke='white', stroke_width=20.0, fill='none'))
+                            stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
         self.d.append(draw.Line(segment.srp.x, segment.srp.y, segment.erp.x, segment.erp.y,
-                            stroke='white', stroke_width=20.0, fill='none'))
+                            stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
     def draw_straight_verbose(self, segment: Straight):
         self.draw_point(segment.sp)
@@ -68,17 +71,17 @@ class Painter:
             final_start_angle = start_angle - 90
 
         self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius), final_start_angle, final_end_angle,
-                          cw=segment.cw, stroke='black', stroke_width=800.0, fill='none'))
+                          cw=segment.cw, stroke='black', stroke_width=DEFAULT_TRACK_WIDTH, fill='none'))
 
-        self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius) - 380.0, final_start_angle,
-                          final_end_angle, cw=segment.cw, stroke='white', stroke_width=20.0, fill='none'))
+        self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius) - 0.380, final_start_angle,
+                          final_end_angle, cw=segment.cw, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
-        self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius) + 380.0, final_start_angle,
-                          final_end_angle, cw=segment.cw, stroke='white', stroke_width=20.0, fill='none'))
+        self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius) + 0.380, final_start_angle,
+                          final_end_angle, cw=segment.cw, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
         self.d.append(draw.Arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius), final_start_angle, final_end_angle,
-                          cw=segment.cw, stroke='white', stroke_width=20.0, fill='none',
-                          style="stroke-miterlimit:4;stroke-dasharray:160,160;stroke-dashoffset:0"))
+                          cw=segment.cw, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+                          style="stroke-miterlimit:4;stroke-dasharray:0.160,0.160;stroke-dashoffset:0"))
 
     def draw_arc_verbose(self, segment: Arc):
         end_angle = segment.direction_angle
@@ -91,7 +94,7 @@ class Painter:
             final_end_angle = end_angle - 90
             final_start_angle = start_angle - 90
 
-        p = draw.Path(fill='none', stroke='blue', stroke_width=20.0)
+        p = draw.Path(fill='none', stroke='blue', stroke_width=DEFAULT_LINE_WIDTH)
         p.arc(segment.cp.x, segment.cp.y, math.fabs(segment.radius), final_end_angle, final_start_angle, cw=not segment.cw)
         p.arc(segment.cp.x, segment.cp.y, 0, final_start_angle, final_end_angle, cw=segment.cw, includeL=True)
         p.Z()
@@ -153,6 +156,7 @@ class Painter:
 
     def draw_track(self, track: Track):
         self.d = draw.Drawing(track.width, track.height, origin=track.origin, displayInline=False)
+        self.d.setPixelScale(1000)
         self.d.append(draw.Rectangle(0, 0, track.width, track.height, fill=track.background_color,
                                      fill_opacity=track.background_opacity))
         for segment in track.segments:
@@ -168,5 +172,5 @@ class Painter:
 
     def save_png(self, track_name: str, output_directory: str):
         output_file_path = os.path.join(output_directory, track_name)
-        self.d.setPixelScale(1)
+        self.d.setPixelScale(1000)
         self.d.savePng(f'{output_file_path}.png')

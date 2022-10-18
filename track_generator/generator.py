@@ -45,7 +45,7 @@ def generate_track(track_files: List[str], root_output_directory: str, generate_
             painter.save_png(track_name, track_output_directory)
 
         if generate_gazebo_project:
-            gazebo_model_generator = GazeboModelGenerator(track_output_directory)
+            gazebo_model_generator = GazeboModelGenerator(track_name, track_output_directory)
             gazebo_model_generator.generate_gazebo_model(track)
 
             painter.save_png(track_name, gazebo_model_generator.track_materials_textures_directory)

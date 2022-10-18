@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import numpy as np
 import pytransform3d.rotations as pyrot
 import pytransform3d.transformations as pytr
@@ -14,9 +15,8 @@ class Point2d:
 
 
 class Track:
-    def __init__(self, name: str, version: str, width: float, height: float, origin: Tuple[float, float],
+    def __init__(self, version: str, width: float, height: float, origin: Tuple[float, float],
                  background_color: str, background_opacity: float, segments: List[Any]):
-        self.name = name
         self.version = version
         self.width = width
         self.height = height

@@ -2,4 +2,4 @@ pytransform3d
 numpy
 drawSvg
 twine
-wheels
+wheel

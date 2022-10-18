@@ -16,6 +16,14 @@ to the corresponding result:
 
 ## Usage
 
+Create a virtual environment
+
+    python -m venv venv
+    # Windows:
+    venv\Scripts\activate
+    # Linux (bash):
+    source venv/bin/activate
+
 Install via pip:
 
     pip install track_generator

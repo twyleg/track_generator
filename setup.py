@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import os
 from setuptools import find_packages, setup
 
@@ -25,7 +26,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'track_generator = track_generator.generator:run',
+            'track_generator = track_generator.starter:run',
         ]
     }
 )

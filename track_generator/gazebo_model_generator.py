@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import os
 from track_generator.track import Track
 from string import Template

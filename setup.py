@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import os
 from setuptools import find_packages, setup
 
@@ -16,7 +17,7 @@ setup(
     keywords="svg model vehicles track",
     url="https://github.com/twyleg/track_generator",
     packages=find_packages(),
-    # include_package_data=True,
+    include_package_data=True,
     long_description=read('README.md'),
     install_requires=[
         'pytransform3d',

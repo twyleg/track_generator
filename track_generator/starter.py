@@ -1,6 +1,10 @@
+# Copyright (C) 2022 twyleg
+import os
 import argparse
 import sys
 import generator
+
+VERSION = '0.0.1'
 
 
 def subcommand_generate_track():
@@ -15,7 +19,7 @@ def subcommand_generate_track():
                         help='Generate Gazebo model for track.')
     args = parser.parse_args(sys.argv[2:])
 
-    generator.generate_track(args.track_files, args.png, args.gazebo)
+    generator.generate_track(args.track_files, args.output, args.png, args.gazebo)
 
 
 def subcommand_generate_trajectory():

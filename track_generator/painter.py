@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import os
 import math
 import pathlib

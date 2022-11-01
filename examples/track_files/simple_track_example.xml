@@ -3,8 +3,8 @@
     <Origin x="0" y="0"/>
     <Background color="#545454" opacity="1.0"/>
     <Segments>
-        <Start x="0.500" y="-0.500" direction_angle="90.0"/>
-        <Straight length="1.500"/>
+        <Start x="0.500" y="0.500" direction_angle="90.0"/>
+        <Straight length="1.000"/>
         <Crosswalk/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="0.500"/>

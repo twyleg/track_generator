@@ -112,6 +112,38 @@ class Arc:
         self.direction_angle = prev_segment.direction_angle + signed_radian_angle
 
 
+class Crosswalk(Straight):
+    def __init__(self, length: float):
+        super().__init__(length)
+        self.line_point_pairs: List[Tuple[Point2d, Point2d]] = []
+
+    def calc(self, prev_segment) -> None:
+        super().calc(prev_segment)
+        start_coordinate_system = prev_segment.end_coordinate_system
+
+        line_width = 0.03
+        freespace_width = 0.02
+        pack_width = line_width + freespace_width
+
+        num_lines = int(((TRACK_WIDTH - (2*LINE_WIDTH + line_width + 2*freespace_width)) / 2) / pack_width)
+        line_freq = ((TRACK_WIDTH - (2*LINE_WIDTH + line_width + 2*freespace_width)) / 2) / num_lines
+
+        self.line_point_pairs.append((
+              Point2d(0, 0, start_coordinate_system),
+              Point2d(self.length, 0, start_coordinate_system)
+        ))
+        for i in range(num_lines):
+            y = line_freq * i + pack_width
+            self.line_point_pairs.append((
+                Point2d(0, y, start_coordinate_system),
+                Point2d(self.length, y, start_coordinate_system)
+            ))
+            self.line_point_pairs.append((
+                Point2d(0, -y, start_coordinate_system),
+                Point2d(self.length, -y, start_coordinate_system)
+            ))
+
+
 class TemplateBasedElement:
     def __init__(self, length: float, width: float, height: float):
         self.length = length
@@ -136,9 +168,7 @@ class TemplateBasedElement:
         self.ep = Point2d(self.length, 0.0, start_coordinate_system)
 
 
-class Crosswalk(TemplateBasedElement):
-    def __init__(self):
-        super().__init__(0.400, 0.800, 0.400)
+
 
 
 class Intersection(TemplateBasedElement):

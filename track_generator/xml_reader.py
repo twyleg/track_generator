@@ -168,7 +168,12 @@ def _read_turn_element(turn_element: ET.Element):
 
 
 def _read_crosswalk_element(crosswalk_element: ET.Element):
-    return Crosswalk()
+    length = crosswalk_element.get('length')
+
+    if length is None:
+        raise AttributeMissingException('length', crosswalk_element)
+
+    return Crosswalk(float(length))
 
 
 def _read_intersection_element(intersection_element: ET.Element):

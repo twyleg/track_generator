@@ -107,9 +107,23 @@ class Painter:
         self.draw_point(segment.srp)
 
     def draw_crosswalk(self, segment: Crosswalk):
-        full_template_file_path = os.path.join(pathlib.Path(__file__).parent.absolute(),
-                                               'segment_templates/crosswalk.svg')
-        self.draw_template_based_segment(segment, full_template_file_path)
+        self.d.append(draw.Line(segment.sp.x_w, segment.sp.y_w,
+                            segment.ep.x_w, segment.ep.y_w,
+                            fill='#eeee00',
+                            stroke='black',
+                            stroke_width=DEFAULT_TRACK_WIDTH))
+
+        self.d.append(draw.Line(segment.slp.x_w, segment.slp.y_w, segment.elp.x_w, segment.elp.y_w,
+                            stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
+
+        self.d.append(draw.Line(segment.srp.x_w, segment.srp.y_w, segment.erp.x_w, segment.erp.y_w,
+                            stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
+
+        for line_point_pair in segment.line_point_pairs:
+            p0 = line_point_pair[0]
+            p1 = line_point_pair[1]
+            self.d.append(draw.Line(p0.x_w, p0.y_w, p1.x_w, p1.y_w,
+                                    stroke='white', stroke_width=0.03, fill='none'))
 
     def draw_intersection(self, segment: Intersection):
         full_template_file_path = os.path.join(pathlib.Path(__file__).parent.absolute(),
@@ -126,12 +140,12 @@ class Painter:
     def draw_segment(self, segment):
         if isinstance(segment, Start):
             pass
+        elif isinstance(segment, Crosswalk):
+            self.draw_crosswalk(segment)
         elif isinstance(segment, Straight):
             self.draw_straight(segment)
         elif isinstance(segment, Arc):
             self.draw_arc(segment)
-        elif isinstance(segment, Crosswalk):
-            self.draw_crosswalk(segment)
         elif isinstance(segment, Intersection):
             self.draw_intersection(segment)
         elif isinstance(segment, Gap):

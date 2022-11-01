@@ -5,7 +5,7 @@
     <Segments>
         <Start x="0.500" y="0.500" direction_angle="90.0"/>
         <Straight length="1.000"/>
-        <Crosswalk/>
+        <Crosswalk length="0.400"/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="0.500"/>
         <Intersection/>

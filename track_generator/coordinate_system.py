@@ -2,7 +2,7 @@
 import numpy as np
 import pytransform3d.rotations as pyrot
 import pytransform3d.transformations as pytr
-from typing import Optional
+from typing import Optional, List
 
 
 class WorldCoordinateSystem:
@@ -35,12 +35,11 @@ class Point2d:
         self.y_w = point_world[1]
 
     def __str__(self):
-        return f'local: ({self.x_l},{self.y_l}), world: ({self.x_w},{self.y_w})'
+        return f'Local: ({self.x_l},{self.y_l}), World: ({self.x_w},{self.y_w})'
 
 
-if __name__ == '__main__':
+Polygon = List[Point2d]
 
-    cs0 = CartesianSystem2d(1.0, 1.0, np.deg2rad(180))
-
-    p0 = Point2d(1.0, 1.0, cs0)
-    print(p0)
+# class Polygon(List[Point2d]):
+#     def __init__(self, *args):
+#         super().__init__(self, *args)

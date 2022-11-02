@@ -177,7 +177,11 @@ def _read_crosswalk_element(crosswalk_element: ET.Element):
 
 
 def _read_intersection_element(intersection_element: ET.Element):
-    return Intersection()
+    length = intersection_element.get('length')
+
+    if length is None:
+        raise AttributeMissingException('length', intersection_element)
+    return Intersection(float(length))
 
 
 def _read_gap_element(straight_element: ET.Element):

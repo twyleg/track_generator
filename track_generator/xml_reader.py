@@ -122,6 +122,8 @@ def _read_segments(root: ET.Element):
             segments.append(_read_intersection_element(segment_element))
         elif segment_element.tag == 'Gap':
             segments.append(_read_gap_element(segment_element))
+        elif segment_element.tag == 'ParkingArea':
+            segments.append(_read_parking_area_element(segment_element))
 
     return segments
 
@@ -191,3 +193,44 @@ def _read_gap_element(straight_element: ET.Element):
         raise AttributeMissingException('length', straight_element)
 
     return Gap(float(length))
+
+
+def _read_spot_element(spot_element: ET.Element) -> ParkingArea.ParkingLot.Spot:
+    type = spot_element.get('type')
+    length = spot_element.get('length')
+    return ParkingArea.ParkingLot.Spot(type, float(length))
+
+
+def _read_parking_lot_element(parking_lot_element: ET.Element) -> ParkingArea.ParkingLot:
+    start = parking_lot_element.get('start')
+    depth = parking_lot_element.get('depth')
+    opening_ending_angle = parking_lot_element.get('opening_ending_angle')
+    spots: List[ParkingArea.ParkingLot.Spot] = []
+
+    for spot_element in parking_lot_element:
+        spot = _read_spot_element(spot_element)
+        spots.append(spot)
+
+    return ParkingArea.ParkingLot(float(start), float(depth), float(opening_ending_angle), spots)
+
+
+def _read_parking_area_element(parking_area_element: ET.Element):
+    length = parking_area_element.get('length')
+
+    if length is None:
+        raise AttributeMissingException('length', parking_area_element)
+
+    right_lots: List[ParkingArea.ParkingLot] = []
+    left_lots: List[ParkingArea.ParkingLot] = []
+
+    right_lots_element = parking_area_element.find("RightLots")
+    for parking_lot_element in right_lots_element:
+        parking_lot = _read_parking_lot_element(parking_lot_element)
+        right_lots.append(parking_lot)
+
+    left_lots_element = parking_area_element.find("LeftLots")
+    for parking_lot_element in left_lots_element:
+        parking_lot = _read_parking_lot_element(parking_lot_element)
+        left_lots.append(parking_lot)
+
+    return ParkingArea(float(length), right_lots, left_lots)

@@ -1,14 +1,35 @@
 <TrackDefinition version="0.0.1">
-    <Size width="5.0" height="5.0"/>
+    <Size width="10.0" height="10.0"/>
     <Origin x="0" y="0"/>
     <Background color="#545454" opacity="1.0"/>
     <Segments>
-        <Start x="0.500" y="0.500" direction_angle="90.0"/>
+        <Start x="0.500" y="5.000" direction_angle="90.0"/>
         <Straight length="1.000"/>
-        <Crosswalk length="0.400"/>
+        <Crosswalk length="0.800"/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="0.500"/>
         <Intersection length="1.600"/>
         <Turn direction="left" radius="0.800" radian="270.0"/>
+        <Gap length="1.600"/>
+        <ParkingArea length="5.0">
+            <RightLots>
+                <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">
+                    <Spot type="free" length="0.3"/>
+                    <Spot type="blocked" length="0.7"/>
+                    <Spot type="occupied" length="0.7"/>
+                </ParkingLot>
+                <ParkingLot start="3.0" depth="0.3" opening_ending_angle="45">
+                    <Spot type="free" length="0.3"/>
+                    <Spot type="blocked" length="0.4"/>
+                    <Spot type="free" length="0.3"/>
+                </ParkingLot>
+            </RightLots>
+            <LeftLots>
+                <ParkingLot start="1.0" depth="0.3" opening_ending_angle="45">
+                    <Spot type="blocked" length="0.3"/>
+                    <Spot type="free" length="0.7"/>
+                </ParkingLot>
+            </LeftLots>
+        </ParkingArea>
     </Segments>
 </TrackDefinition>

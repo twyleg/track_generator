@@ -1,12 +1,11 @@
 # Copyright (C) 2022 twyleg
 import os
 import math
-import pathlib
 import drawSvg as draw
 
-from typing import Optional, List
-from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap
-from track_generator.coordinate_system import Point2d
+from typing import Optional
+from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea
+from track_generator.coordinate_system import Point2d, Polygon
 
 DEFAULT_LINE_WIDTH = 0.020
 DEFAULT_TRACK_WIDTH = 0.800
@@ -16,7 +15,7 @@ class Painter:
     def __init__(self):
         self.d: Optional[draw.Drawing] = None
 
-    def draw_polygon(self, polygon: List[Point2d], **kwargs) -> None:
+    def draw_polygon(self, polygon: Polygon, **kwargs) -> None:
         if len(polygon) < 2:
             return
         for i in range(1, len(polygon)):
@@ -130,7 +129,27 @@ class Painter:
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                             style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0")
 
-    
+    def draw_parking_area(self, segment: ParkingArea):
+        self.draw_straight(segment)
+
+        for polygon in segment.outline_polygon:
+            # Background
+            self.d.append(draw.Lines(
+                polygon[0].x_w, polygon[0].y_w,
+                polygon[1].x_w, polygon[1].y_w,
+                polygon[2].x_w, polygon[2].y_w,
+                polygon[3].x_w, polygon[3].y_w,
+                close=False,
+                fill='black'))
+            # Outline
+            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+
+        for polygon in segment.spot_seperator_polygons:
+            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+
+        for polygon in segment.blocker_polygons:
+            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+
     def draw_template_based_segment(self, segment, template_file_path: str):
         self.d.append(draw.Image(segment.start_point_center.x_w - (segment.width / 2.0), segment.start_point_center.y_w, segment.width, segment.height,
                                  template_file_path,
@@ -143,6 +162,8 @@ class Painter:
             pass
         elif isinstance(segment, Crosswalk):
             self.draw_crosswalk(segment)
+        elif isinstance(segment, ParkingArea):
+            self.draw_parking_area(segment)
         elif isinstance(segment, Straight):
             self.draw_straight(segment)
         elif isinstance(segment, Arc):

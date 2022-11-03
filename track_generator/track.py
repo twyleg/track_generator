@@ -1,5 +1,10 @@
 # Copyright (C) 2022 twyleg
+from enum import Enum
+from math import tan
 from typing import Any, List, Tuple, Optional
+
+import numpy
+
 from track_generator.coordinate_system import Polygon, Point2d, CartesianSystem2d
 
 LINE_WIDTH = 0.020
@@ -271,3 +276,86 @@ class TemplateBasedElement:
 class Gap(TemplateBasedElement):
     def __init__(self, length: float):
         super().__init__(length, 0, 0)
+
+
+class ParkingArea(Straight):
+
+    class Side(Enum):
+        LEFT = 1
+        RIGHT = 2
+
+    class ParkingLot:
+
+        class Spot:
+            def __init__(self, type: str, length: float):
+                self.type = type
+                self.length = length
+
+        def __init__(self, start: float, depth: float, opening_ending_angle: float, spots: List[Spot]):
+            self.start = start
+            self.depth = depth
+            self.opening_ending_angle = opening_ending_angle
+            self.spots = spots
+            self.length = self.calc_parking_lot_length()
+
+        def calc_parking_lot_length(self):
+            length = 0.0
+            for spot in self.spots:
+                length = length + spot.length
+            return length
+
+    def __init__(self, length: float, right_lots: List[ParkingLot], left_lots: List[ParkingLot]):
+        super().__init__(length)
+        self.right_lots = right_lots
+        self.left_lots = left_lots
+        self.outline_polygon: List[Polygon] = []
+        self.spot_seperator_polygons: List[Polygon] = []
+        self.blocker_polygons: List[Polygon] = []
+
+    def calc_lots(self, lots: List[ParkingLot], side: Side, start_coordinate_system: CartesianSystem2d):
+
+        side_factor = 1 if side == self.Side.LEFT else -1
+
+        for lot in lots:
+            opening_ending_length = lot.depth / tan(numpy.deg2rad(lot.opening_ending_angle))
+
+            self.outline_polygon.append([
+                Point2d(lot.start, side_factor * LINE_OFFSET, start_coordinate_system),
+                Point2d(lot.start + opening_ending_length, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system),
+                Point2d(lot.start + lot.length + opening_ending_length, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system),
+                Point2d(lot.start + lot.length + 2*opening_ending_length, side_factor * LINE_OFFSET, start_coordinate_system)
+            ])
+
+            offset = opening_ending_length
+            for spot in lot.spots:
+                self.spot_seperator_polygons.append([
+                    Point2d(lot.start + offset, side_factor * LINE_OFFSET, start_coordinate_system),
+                    Point2d(lot.start + offset, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system)
+                ])
+
+                if spot.type == 'blocked':
+                    self.blocker_polygons.append([
+                        Point2d(lot.start + offset, side_factor * LINE_OFFSET, start_coordinate_system),
+                        Point2d(lot.start + offset + spot.length, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system)
+                    ])
+                    self.blocker_polygons.append([
+                        Point2d(lot.start + offset + spot.length, side_factor * LINE_OFFSET, start_coordinate_system),
+                        Point2d(lot.start + offset, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system)
+                    ])
+
+                offset = offset + spot.length
+
+            self.spot_seperator_polygons.append([
+                Point2d(lot.start + offset, side_factor * LINE_OFFSET, start_coordinate_system),
+                Point2d(lot.start + offset, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system)
+            ])
+
+    def calc(self, prev_segment) -> None:
+        super().calc(prev_segment)
+        start_coordinate_system = prev_segment.end_coordinate_system
+
+        self.calc_lots(self.left_lots, self.Side.LEFT, start_coordinate_system)
+        self.calc_lots(self.right_lots, self.Side.RIGHT, start_coordinate_system)
+
+
+

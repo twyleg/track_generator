@@ -4,11 +4,12 @@ import math
 import drawSvg as draw
 
 from typing import Optional
-from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea
+from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea, TrafficIsland
 from track_generator.coordinate_system import Point2d, Polygon
 
 DEFAULT_LINE_WIDTH = 0.020
 DEFAULT_TRACK_WIDTH = 0.800
+
 
 class Painter:
 
@@ -29,7 +30,7 @@ class Painter:
                                   0.010,
                                   fill='red', stroke_width=0, stroke='black'))
 
-        self.d.append(draw.Text(f'({int(p.x_w)},{int(p.y_w)})', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
+        self.d.append(draw.Text(f'{p.x_w:.3f}\n{p.y_w:.3f}', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
 
     def draw_arc_center_point(self, p: Point2d, radian_angle, radius):
         self.d.append(draw.Circle(p.x_w,
@@ -37,28 +38,25 @@ class Painter:
                                   0.010,
                                   fill='red', stroke_width=0, stroke='black'))
 
-        self.d.append(draw.Text(f'({int(p.x_w)},{int(p.y_w)})\nr={int(radius)}\na={int(radian_angle)}°', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
+        self.d.append(draw.Text(f'{p.x_w:.3f}\n{p.y_w:.3f}\nr={radius:.3f}\na={radian_angle:.1f}°', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
 
     def draw_start_verbose(self, segment: Start):
-        self.draw_point(segment.sp)
-        self.draw_point(segment.slp)
-        self.draw_point(segment.srp)
+        self.draw_point(segment.start_point)
 
     def draw_straight(self, segment: Straight):
 
-        self.draw_polygon(segment.center_line_polygon[0], fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
-        self.draw_polygon(segment.center_line_polygon[0], stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+        self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
+        self.draw_polygon(segment.center_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                             style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0")
         # stroke-miterlimit:4;stroke-dasharray:0.08,0.16;stroke-dashoffset:0;stroke-width:0.02
 
-        self.draw_polygon(segment.left_line_polygon[0], stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
-        self.draw_polygon(segment.right_line_polygon[0], stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
-
+        self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.right_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
     def draw_straight_verbose(self, segment: Straight):
-        self.draw_point(segment.center_line_polygon[0][0])
-        self.draw_point(segment.left_line_polygon[0][0])
-        self.draw_point(segment.right_line_polygon[0][0])
+        self.draw_point(segment.center_line_polygon[0])
+        self.draw_point(segment.left_line_polygon[0])
+        self.draw_point(segment.right_line_polygon[0])
 
     def draw_arc(self, segment: Arc):
         end_angle = segment.direction_angle
@@ -107,9 +105,9 @@ class Painter:
         self.draw_point(segment.start_point_right)
 
     def draw_crosswalk(self, segment: Crosswalk):
-        self.draw_polygon(segment.center_line_polygon[0], fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
-        self.draw_polygon(segment.left_line_polygon[0], stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
-        self.draw_polygon(segment.right_line_polygon[0], stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
+        self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.right_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.line_polygons:
             self.draw_polygon(polygon, stroke='white', stroke_width=0.03, fill='none')
@@ -128,6 +126,25 @@ class Painter:
         for polygon in segment.center_line_polygons:
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                             style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0")
+
+    def draw_traffic_island(self, segment: TrafficIsland):
+        self.d.append(draw.Lines(
+            segment.background_polygon[0].x_w, segment.background_polygon[0].y_w,
+            segment.background_polygon[1].x_w, segment.background_polygon[1].y_w,
+            segment.background_polygon[2].x_w, segment.background_polygon[2].y_w,
+            segment.background_polygon[3].x_w, segment.background_polygon[3].y_w,
+            segment.background_polygon[4].x_w, segment.background_polygon[4].y_w,
+            segment.background_polygon[5].x_w, segment.background_polygon[5].y_w,
+            segment.background_polygon[6].x_w, segment.background_polygon[6].y_w,
+            segment.background_polygon[7].x_w, segment.background_polygon[7].y_w,
+            close=False,
+            fill='black'))
+
+        for polygon in segment.line_polygons:
+            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+
+        for polygon in segment.crosswalk_lines_polygons:
+            self.draw_polygon(polygon, stroke='white', stroke_width=0.03, fill='none')
 
     def draw_parking_area(self, segment: ParkingArea):
         self.draw_straight(segment)
@@ -154,11 +171,12 @@ class Painter:
         self.d.append(draw.Image(segment.start_point_center.x_w - (segment.width / 2.0), segment.start_point_center.y_w, segment.width, segment.height,
                                  template_file_path,
                                  embed=True,
-                                 transform=f'rotate({-(segment.direction_angle - 90.0)} , {segment.start_point_center.x_w}, {-segment.start_point_center.y_w})')
-        )
+                                 transform=f'rotate({-(segment.direction_angle - 90.0)} , {segment.start_point_center.x_w}, {-segment.start_point_center.y_w})'))
 
     def draw_segment(self, segment):
         if isinstance(segment, Start):
+            pass
+        elif isinstance(segment, Gap):
             pass
         elif isinstance(segment, Crosswalk):
             self.draw_crosswalk(segment)
@@ -170,8 +188,8 @@ class Painter:
             self.draw_arc(segment)
         elif isinstance(segment, Intersection):
             self.draw_intersection(segment)
-        elif isinstance(segment, Gap):
-            pass
+        elif isinstance(segment, TrafficIsland):
+            self.draw_traffic_island(segment)
         else:
             raise RuntimeError()
 
@@ -182,14 +200,6 @@ class Painter:
             self.draw_straight_verbose(segment)
         elif isinstance(segment, Arc):
             self.draw_arc_verbose(segment)
-        # elif isinstance(segment, Crosswalk):
-        #     self.draw_crosswalk_verbose(segment)
-        # elif isinstance(segment, Intersection):
-        #     self.draw_intersection_verbose(segment)
-        # elif isinstance(segment, Gap):
-        #     pass
-        # else:
-        #     raise RuntimeError()
 
     def draw_track(self, track: Track):
         self.d = draw.Drawing(track.width, track.height, origin=track.origin, displayInline=False)

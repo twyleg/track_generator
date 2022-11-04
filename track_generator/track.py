@@ -1,15 +1,46 @@
 # Copyright (C) 2022 twyleg
+import numpy
 from enum import Enum
 from math import tan
 from typing import Any, List, Tuple, Optional
-
-import numpy
-
 from track_generator.coordinate_system import Polygon, Point2d, CartesianSystem2d
 
 LINE_WIDTH = 0.020
 TRACK_WIDTH = 0.800
 LINE_OFFSET = (TRACK_WIDTH / 2) - LINE_WIDTH
+
+CROSSWALK_LINE_WIDTH = 0.03
+CROSSWALK_LINE_GAP = 0.03
+
+
+class Side(Enum):
+    LEFT = 1
+    RIGHT = 2
+
+
+def calc_crosswalk_lines(length: float, width: float, coordinate_system: CartesianSystem2d) -> List[Polygon]:
+    polygons: List[Polygon] = []
+    pack_width = CROSSWALK_LINE_WIDTH + CROSSWALK_LINE_GAP
+
+    num_lines = int(width / pack_width)
+    line_freq = width / num_lines
+
+    polygons.append([
+          Point2d(0, 0, coordinate_system),
+          Point2d(length, 0, coordinate_system)
+    ])
+    for i in range(int(num_lines / 2)):
+        y = line_freq * i + pack_width
+        polygons.append([
+            Point2d(0, +y, coordinate_system),
+            Point2d(length, +y, coordinate_system)
+        ])
+        polygons.append([
+            Point2d(0, -y, coordinate_system),
+            Point2d(length, -y, coordinate_system)
+        ])
+
+    return polygons
 
 
 class Track:
@@ -32,6 +63,17 @@ class Track:
                 self.segments[i].calc(prev_segment)
 
 
+class Segment:
+    def __init__(self):
+        self.direction_angle: Optional[float] = None
+        self.start_coordinate_system: Optional[CartesianSystem2d] = None
+        self.end_coordinate_system: Optional[CartesianSystem2d] = None
+
+    def calc(self, prev_segment):
+        self.start_coordinate_system = prev_segment.end_coordinate_system
+        self.direction_angle = prev_segment.direction_angle
+
+
 class Start:
     def __init__(self, x: float, y: float, direction_angle: float):
         self.start_coordinate_system = CartesianSystem2d(x, y, direction_angle)
@@ -46,50 +88,46 @@ class Start:
         pass
 
 
-class Straight:
+class Straight(Segment):
     def __init__(self, length: float):
+        super().__init__()
         self.length = length
-        self.direction_angle: Optional[float] = None
 
-        self.end_coordinate_system: Optional[CartesianSystem2d] = None
-
-        self.center_line_polygon: List[Polygon] = []
-        self.left_line_polygon: List[Polygon] = []
-        self.right_line_polygon: List[Polygon] = []
+        self.center_line_polygon: Polygon = []
+        self.left_line_polygon: Polygon = []
+        self.right_line_polygon: Polygon = []
 
     def __str__(self) -> str:
         return f'Straight: sp={self.center_line_polygon[0][0]}, ep={self.center_line_polygon[0][1]},' \
                f' length={self.length}, direction_angle={self.direction_angle}'
 
     def calc(self, prev_segment) -> None:
-        start_coordinate_system = prev_segment.end_coordinate_system
-        self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, start_coordinate_system)
-        self.direction_angle = prev_segment.direction_angle
+        super().calc(prev_segment)
+        self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, self.start_coordinate_system)
 
-        self.center_line_polygon.append([
-            Point2d(0.0, 0.0, start_coordinate_system),
-            Point2d(self.length, 0.0, start_coordinate_system)
-        ])
+        self.center_line_polygon = [
+            Point2d(0.0, 0.0, self.start_coordinate_system),
+            Point2d(self.length, 0.0, self.start_coordinate_system)
+        ]
 
-        self.left_line_polygon.append([
-            Point2d(0.0, -LINE_OFFSET, start_coordinate_system),
-            Point2d(self.length, -LINE_OFFSET, start_coordinate_system)
-        ])
+        self.left_line_polygon = [
+            Point2d(0.0, -LINE_OFFSET, self.start_coordinate_system),
+            Point2d(self.length, -LINE_OFFSET, self.start_coordinate_system)
+        ]
 
-        self.right_line_polygon.append([
-            Point2d(0.0, +LINE_OFFSET, start_coordinate_system),
-            Point2d(self.length, +LINE_OFFSET, start_coordinate_system)
-        ])
+        self.right_line_polygon = [
+            Point2d(0.0, +LINE_OFFSET, self.start_coordinate_system),
+            Point2d(self.length, +LINE_OFFSET, self.start_coordinate_system)
+        ]
 
 
-class Arc:
+class Arc(Segment):
     def __init__(self, radius: float, radian_angle: float, direction_clockwise: bool):
+        super().__init__()
         self.radius = radius
         self.radian_angle = radian_angle
         self.direction_clockwise = direction_clockwise
         self.start_direction_angle: Optional[float] = None
-        self.direction_angle: Optional[float] = None
-        self.end_coordinate_system: Optional[CartesianSystem2d] = None
 
         self.start_point_center: Optional[Point2d] = None
         self.start_point_left: Optional[Point2d] = None
@@ -103,17 +141,17 @@ class Arc:
                f' cw={self.direction_clockwise}, angle={self.radian_angle}, radius={self.radius}'
 
     def calc(self, prev_segment) -> None:
-        start_coordinate_system = prev_segment.end_coordinate_system
+        super().calc(prev_segment)
 
         signed_radian_angle = -self.radian_angle if self.direction_clockwise else self.radian_angle
         center_offset = self.radius if self.direction_clockwise else -self.radius
 
-        center_coordinate_system = CartesianSystem2d(0.0, -center_offset, signed_radian_angle, start_coordinate_system)
+        center_coordinate_system = CartesianSystem2d(0.0, -center_offset, signed_radian_angle, self.start_coordinate_system)
         self.end_coordinate_system = CartesianSystem2d(0.0, center_offset, 0.0, center_coordinate_system)
 
-        self.start_point_center = Point2d(0.0, 0.0, start_coordinate_system)
-        self.start_point_left = Point2d(0.0, -LINE_OFFSET, start_coordinate_system)
-        self.start_point_right = Point2d(0.0, +LINE_OFFSET, start_coordinate_system)
+        self.start_point_center = Point2d(0.0, 0.0, self.start_coordinate_system)
+        self.start_point_left = Point2d(0.0, -LINE_OFFSET, self.start_coordinate_system)
+        self.start_point_right = Point2d(0.0, +LINE_OFFSET, self.start_coordinate_system)
 
         self.end_point_center = Point2d(0.0, 0.0, self.end_coordinate_system)
         self.center_point = Point2d(0.0, 0.0, center_coordinate_system)
@@ -129,160 +167,107 @@ class Crosswalk(Straight):
 
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
-        start_coordinate_system = prev_segment.end_coordinate_system
-
-        line_width = 0.03
-        freespace_width = 0.02
-        pack_width = line_width + freespace_width
-
-        num_lines = int(((TRACK_WIDTH - (2*LINE_WIDTH + line_width + 2*freespace_width)) / 2) / pack_width)
-        line_freq = ((TRACK_WIDTH - (2*LINE_WIDTH + line_width + 2*freespace_width)) / 2) / num_lines
-
-        self.line_polygons.append([
-              Point2d(0, 0, start_coordinate_system),
-              Point2d(self.length, 0, start_coordinate_system)
-        ])
-        for i in range(num_lines):
-            y = line_freq * i + pack_width
-            self.line_polygons.append([
-                Point2d(0, y, start_coordinate_system),
-                Point2d(self.length, y, start_coordinate_system)
-            ])
-            self.line_polygons.append([
-                Point2d(0, -y, start_coordinate_system),
-                Point2d(self.length, -y, start_coordinate_system)
-            ])
+        self.line_polygons = calc_crosswalk_lines(self.length, TRACK_WIDTH, self.start_coordinate_system)
 
 
-class Intersection:
+class Intersection(Segment):
     def __init__(self, length: float):
+        super().__init__()
         self.length = length
         self.base_line_polygons: List[Polygon] = []
         self.corner_line_polygons: List[Polygon] = []
         self.stop_line_polygons: List[Polygon] = []
         self.center_line_polygons: List[Polygon] = []
-        self.end_coordinate_system: Optional[CartesianSystem2d] = None
-        self.direction_angle: Optional[float] = None
 
-    def calc_base_lines(self, start_coordinate_system: CartesianSystem2d) -> None:
+    def calc_base_lines(self) -> None:
         self.base_line_polygons.append([
-            Point2d(0.0, 0.0, start_coordinate_system),
-            Point2d(self.length, 0.0, start_coordinate_system),
+            Point2d(0.0, 0.0, self.start_coordinate_system),
+            Point2d(self.length, 0.0, self.start_coordinate_system),
         ])
         self.base_line_polygons.append([
-            Point2d(self.length/2, -self.length/2, start_coordinate_system),
-            Point2d(self.length/2, +self.length/2, start_coordinate_system),
+            Point2d(self.length/2, -self.length/2, self.start_coordinate_system),
+            Point2d(self.length/2, +self.length/2, self.start_coordinate_system),
         ])
 
-    def calc_corner_lines(self, start_coordinate_system: CartesianSystem2d) -> None:
+    def calc_corner_lines(self) -> None:
         center_x = self.length / 2.0
 
         self.corner_line_polygons.append([
-            Point2d(0, -LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, -LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, -self.length/2, start_coordinate_system),
+            Point2d(0, -LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, -LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, -self.length/2, self.start_coordinate_system),
         ])
 
         self.corner_line_polygons.append([
-            Point2d(0, +LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, +LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, +self.length/2, start_coordinate_system),
+            Point2d(0, +LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, +LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, +self.length/2, self.start_coordinate_system),
         ])
 
         self.corner_line_polygons.append([
-            Point2d(self.length, -LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, -LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, -self.length/2, start_coordinate_system),
+            Point2d(self.length, -LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, -LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, -self.length/2, self.start_coordinate_system),
         ])
 
         self.corner_line_polygons.append([
-            Point2d(self.length, +LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, +LINE_OFFSET, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, +self.length/2, start_coordinate_system),
+            Point2d(self.length, +LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, +LINE_OFFSET, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, +self.length/2, self.start_coordinate_system),
         ])
 
-    def calc_stop_lines(self, start_coordinate_system: CartesianSystem2d) -> None:
+    def calc_stop_lines(self) -> None:
         center_x = self.length / 2.0
 
         self.stop_line_polygons.append([
-            Point2d(center_x - LINE_OFFSET, 0, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, -LINE_OFFSET, start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, 0, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, -LINE_OFFSET, self.start_coordinate_system),
         ])
 
         self.stop_line_polygons.append([
-            Point2d(center_x + LINE_OFFSET, 0, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, +LINE_OFFSET, start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, 0, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, +LINE_OFFSET, self.start_coordinate_system),
         ])
 
-    def calc_center_lines(self, start_coordinate_system: CartesianSystem2d) -> None:
+    def calc_center_lines(self) -> None:
         center_x = self.length / 2.0
 
         self.center_line_polygons.append([
-            Point2d(0, 0, start_coordinate_system),
-            Point2d(center_x - LINE_OFFSET, 0, start_coordinate_system),
+            Point2d(0, 0, self.start_coordinate_system),
+            Point2d(center_x - LINE_OFFSET, 0, self.start_coordinate_system),
         ])
 
         self.center_line_polygons.append([
-            Point2d(self.length, 0, start_coordinate_system),
-            Point2d(center_x + LINE_OFFSET, 0, start_coordinate_system),
+            Point2d(self.length, 0, self.start_coordinate_system),
+            Point2d(center_x + LINE_OFFSET, 0, self.start_coordinate_system),
         ])
 
         self.center_line_polygons.append([
-            Point2d(center_x, self.length/2, start_coordinate_system),
-            Point2d(center_x, +LINE_OFFSET, start_coordinate_system),
+            Point2d(center_x, self.length/2, self.start_coordinate_system),
+            Point2d(center_x, +LINE_OFFSET, self.start_coordinate_system),
         ])
 
         self.center_line_polygons.append([
-            Point2d(center_x, -self.length/2, start_coordinate_system),
-            Point2d(center_x, -LINE_OFFSET, start_coordinate_system),
+            Point2d(center_x, -self.length/2, self.start_coordinate_system),
+            Point2d(center_x, -LINE_OFFSET, self.start_coordinate_system),
         ])
 
     def calc(self, prev_segment) -> None:
-        start_coordinate_system = prev_segment.end_coordinate_system
+        super().calc(prev_segment)
+        self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, self.start_coordinate_system)
 
-        self.calc_base_lines(start_coordinate_system)
-        self.calc_corner_lines(start_coordinate_system)
-        self.calc_stop_lines(start_coordinate_system)
-        self.calc_center_lines(start_coordinate_system)
-
-        self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, start_coordinate_system)
-        self.direction_angle = prev_segment.direction_angle
+        self.calc_base_lines()
+        self.calc_corner_lines()
+        self.calc_stop_lines()
+        self.calc_center_lines()
 
 
-class TemplateBasedElement:
-    def __init__(self, length: float, width: float, height: float):
-        self.length = length
-        self.width = width
-        self.height = height
-        self.direction_angle: Optional[float] = None
-        self.end_coordinate_system: Optional[CartesianSystem2d] = None
-
-        self.sp: Optional[Point2d] = None
-        self.ep: Optional[Point2d] = None
-
-    def __str__(self) -> str:
-        return f'TemplateBasedElement: sp={self.sp}, ep={self.ep}, direction_angle={self.direction_angle},' \
-               f' length={self.length}'
-
-    def calc(self, prev_segment) -> None:
-        start_coordinate_system = prev_segment.end_coordinate_system
-        self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, start_coordinate_system)
-        self.direction_angle = prev_segment.direction_angle
-
-        self.sp = Point2d(0.0, 0.0, start_coordinate_system)
-        self.ep = Point2d(self.length, 0.0, start_coordinate_system)
-
-
-class Gap(TemplateBasedElement):
+class Gap(Straight):
     def __init__(self, length: float):
-        super().__init__(length, 0, 0)
+        super().__init__(length)
 
 
 class ParkingArea(Straight):
-
-    class Side(Enum):
-        LEFT = 1
-        RIGHT = 2
 
     class ParkingLot:
 
@@ -314,7 +299,7 @@ class ParkingArea(Straight):
 
     def calc_lots(self, lots: List[ParkingLot], side: Side, start_coordinate_system: CartesianSystem2d):
 
-        side_factor = 1 if side == self.Side.LEFT else -1
+        side_factor = 1 if side == Side.LEFT else -1
 
         for lot in lots:
             opening_ending_length = lot.depth / tan(numpy.deg2rad(lot.opening_ending_angle))
@@ -354,8 +339,79 @@ class ParkingArea(Straight):
         super().calc(prev_segment)
         start_coordinate_system = prev_segment.end_coordinate_system
 
-        self.calc_lots(self.left_lots, self.Side.LEFT, start_coordinate_system)
-        self.calc_lots(self.right_lots, self.Side.RIGHT, start_coordinate_system)
+        self.calc_lots(self.left_lots, Side.LEFT, start_coordinate_system)
+        self.calc_lots(self.right_lots, Side.RIGHT, start_coordinate_system)
 
 
+class TrafficIsland(Segment):
+    def __init__(self, island_width: float, crosswalk_length: float, curve_segment_length: float, curvature: float):
+        super().__init__()
+        self.direction_angle: Optional[float] = None
+        self.island_width = island_width
+        self.overall_width = island_width + TRACK_WIDTH
+        self.crosswalk_length = crosswalk_length
+        self.curve_segment_length = curve_segment_length
+        self.curvature = curvature
+        self.background_polygon: Polygon = []
+        self.line_polygons: List[Polygon] = []
+        self.crosswalk_lines_polygons: List[Polygon] = []
 
+    def calc_lane(self, side: Side):
+        side_factor = 1 if side == Side.LEFT else -1
+
+        self.line_polygons.append([
+            Point2d(0.0, 0.0, self.start_coordinate_system),
+            Point2d(self.curve_segment_length, side_factor * self.island_width/2, self.start_coordinate_system),
+            Point2d(self.curve_segment_length + self.crosswalk_length,  side_factor * self.island_width/2,
+                    self.start_coordinate_system),
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, 0.0,
+                    self.start_coordinate_system)
+        ])
+
+        self.line_polygons.append([
+            Point2d(0.0, side_factor * LINE_OFFSET, self.start_coordinate_system),
+            Point2d(self.curve_segment_length, side_factor * (self.island_width/2 + LINE_OFFSET), self.start_coordinate_system),
+            Point2d(self.curve_segment_length + self.crosswalk_length,  side_factor * (self.island_width/2 + LINE_OFFSET),
+                    self.start_coordinate_system),
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, side_factor * LINE_OFFSET,
+                    self.start_coordinate_system)
+        ])
+
+    def calc_background(self):
+        self.background_polygon = [
+            Point2d(0.0, TRACK_WIDTH/2, self.start_coordinate_system),
+            Point2d(self.curve_segment_length, TRACK_WIDTH/2 + self.island_width/2, self.start_coordinate_system),
+            Point2d(self.curve_segment_length + self.crosswalk_length, TRACK_WIDTH/2 + self.island_width/2,
+                    self.start_coordinate_system),
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, TRACK_WIDTH/2, self.start_coordinate_system),
+
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, -TRACK_WIDTH/2, self.start_coordinate_system),
+            Point2d(self.curve_segment_length + self.crosswalk_length, -(TRACK_WIDTH/2 + self.island_width/2),
+                    self.start_coordinate_system),
+            Point2d(self.curve_segment_length, -(TRACK_WIDTH/2 + self.island_width/2), self.start_coordinate_system),
+            Point2d(0.0, -TRACK_WIDTH/2, self.start_coordinate_system)
+        ]
+
+    def calc_crosswalk_lines(self):
+        width = TRACK_WIDTH/2 - LINE_WIDTH
+        self.crosswalk_lines_polygons = calc_crosswalk_lines(
+            self.crosswalk_length, width, CartesianSystem2d(
+                self.curve_segment_length, + (self.island_width/2 + LINE_OFFSET/2), 0.0, self.start_coordinate_system
+            )
+        )
+
+        self.crosswalk_lines_polygons = self.crosswalk_lines_polygons + calc_crosswalk_lines(
+            self.crosswalk_length, width, CartesianSystem2d(
+                self.curve_segment_length, - (self.island_width/2 + LINE_OFFSET/2), 0.0, self.start_coordinate_system
+            )
+        )
+
+    def calc(self, prev_segment):
+        super().calc(prev_segment)
+        overall_length = 2*self.curve_segment_length + self.crosswalk_length
+        self.end_coordinate_system = CartesianSystem2d(overall_length, 0.0, 0.0, self.start_coordinate_system)
+
+        self.calc_background()
+        self.calc_lane(Side.LEFT)
+        self.calc_lane(Side.RIGHT)
+        self.calc_crosswalk_lines()

@@ -44,7 +44,7 @@ Run:
 
 ### Run with example track definition:
 
-    python track_generator/generator.py examples/simple_track_example
+    python track_generator/starter.py examples/track_files/simple_track_example.xml
 
 ### Build software and binary distribution:
 

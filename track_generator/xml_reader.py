@@ -124,6 +124,8 @@ def _read_segments(root: ET.Element):
             segments.append(_read_gap_element(segment_element))
         elif segment_element.tag == 'ParkingArea':
             segments.append(_read_parking_area_element(segment_element))
+        elif segment_element.tag == 'TrafficIsland':
+            segments.append(_read_traffic_island_element(segment_element))
 
     return segments
 
@@ -234,3 +236,12 @@ def _read_parking_area_element(parking_area_element: ET.Element):
         left_lots.append(parking_lot)
 
     return ParkingArea(float(length), right_lots, left_lots)
+
+
+def _read_traffic_island_element(traffic_island_element: ET.Element):
+    island_width = traffic_island_element.get('island_width')
+    crosswalk_length = traffic_island_element.get('crosswalk_length')
+    curve_segment_length = traffic_island_element.get('curve_segment_length')
+    curvature = traffic_island_element.get('curvature')
+
+    return TrafficIsland(float(island_width), float(crosswalk_length), float(curve_segment_length), float(curvature))

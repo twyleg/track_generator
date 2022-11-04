@@ -11,14 +11,14 @@
         <Intersection length="1.600"/>
         <Turn direction="left" radius="0.800" radian="270.0"/>
         <Gap length="1.600"/>
-        <ParkingArea length="5.0">
+        <ParkingArea length="4.0">
             <RightLots>
                 <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">
                     <Spot type="free" length="0.3"/>
                     <Spot type="blocked" length="0.7"/>
                     <Spot type="occupied" length="0.7"/>
                 </ParkingLot>
-                <ParkingLot start="3.0" depth="0.3" opening_ending_angle="45">
+                <ParkingLot start="2.3" depth="0.3" opening_ending_angle="45">
                     <Spot type="free" length="0.3"/>
                     <Spot type="blocked" length="0.4"/>
                     <Spot type="free" length="0.3"/>
@@ -31,5 +31,8 @@
                 </ParkingLot>
             </LeftLots>
         </ParkingArea>
+        <Turn direction="left" radius="1.0" radian="90.0"/>
+        <TrafficIsland island_width="0.5" crosswalk_length="1.0" curve_segment_length="1.0" curvature="1.0"/>
+        <Turn direction="left" radius="1.0" radian="90.0"/>
     </Segments>
 </TrackDefinition>

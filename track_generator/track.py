@@ -43,15 +43,34 @@ def calc_crosswalk_lines(length: float, width: float, coordinate_system: Cartesi
     return polygons
 
 
+class Background:
+
+    class Color:
+        def __init__(self, color: str, opacity: float):
+            self.color = color
+            self.opacity = opacity
+
+    class Image:
+        def __init__(self, file: str, x: float, y: float, width: float, height: float):
+            self.file = file
+            self.x = x
+            self.y = y
+            self.width = width
+            self.height = height
+
+    def __init__(self, color: Color = None, image: Image = None):
+        self.color: Optional[Background.Color] = color
+        self.image: Optional[Background.Image] = image
+
+
 class Track:
     def __init__(self, version: str, width: float, height: float, origin: Tuple[float, float],
-                 background_color: str, background_opacity: float, segments: List[Any]):
+                 background: Background, segments: List[Any]):
         self.version = version
         self.width = width
         self.height = height
         self.origin = origin
-        self.background_color = background_color
-        self.background_opacity = background_opacity
+        self.background = background
         self.segments = segments
 
     def calc(self) -> None:

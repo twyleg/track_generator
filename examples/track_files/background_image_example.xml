@@ -1,0 +1,31 @@
+<TrackDefinition version="0.0.1">
+    <Size width="5.6" height="9.0"/>
+    <Origin x="0" y="0"/>
+    <Background color="#545454" opacity="1.0"/>
+    <BackgroundImage file="background_image.png" x="0.0" y="0.0" width="5.6" height="9.0"/>
+    <Segments>
+        <Start x="5.10" y="1.70" direction_angle="90.0"/>
+        <Straight length="5.85"/>
+        <Turn direction="left" radius="1.0" radian="94.0"/>
+        <Straight length="2.5"/>
+        <Turn direction="left" radius="1.0" radian="90.0"/>
+        <Straight length="0.33"/>
+        <Turn direction="left" radius="0.88" radian="135.0"/>
+        <Straight length="0.7"/>
+        <Turn direction="right" radius="0.7" radian="35.0"/>
+        <Straight length="0.2"/>
+        <Turn direction="right" radius="0.7" radian="60.0"/>
+        <Straight length="0.2"/>
+        <Turn direction="right" radius="0.5" radian="37.0"/>
+        <Straight length="0.7"/>
+        <Turn direction="right" radius="0.5" radian="15.0"/>
+        <Straight length="0.8"/>
+        <Turn direction="right" radius="0.5" radian="80.0"/>
+        <Straight length="2.2"/>
+        <Turn direction="left" radius="1.1" radian="138.0"/>
+        <Straight length="2.9"/>
+        <Turn direction="left" radius="1.1" radian="70.0"/>
+        <Straight length="0.4"/>
+        <Turn direction="left" radius="1.0" radian="62.0"/>
+    </Segments>
+</TrackDefinition>

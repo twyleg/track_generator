@@ -22,7 +22,9 @@ setup(
     install_requires=[
         'pytransform3d',
         'numpy',
-        'drawSvg'
+        'drawSvg',
+        'watchdog',
+        'PySide6'
     ],
     entry_points={
         'console_scripts': [

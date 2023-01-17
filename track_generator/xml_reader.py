@@ -1,5 +1,7 @@
 # Copyright (C) 2022 twyleg
+import os
 import xml.etree.ElementTree as ET
+
 from track_generator.track import *
 
 
@@ -28,10 +30,10 @@ def read_track(xml_input_file_path: str) -> Track:
     version = _read_root(root)
     width, height = _read_size(root)
     x, y = _read_origin(root)
-    background_color, background_opacity = _read_background(root)
+    background = _read_background(root, xml_input_file_path)
     segments = _read_segments(root)
 
-    return Track(version, width, height, (x, y), background_color, background_opacity, segments)
+    return Track(version, width, height, (x, y), background, segments)
 
 
 def _read_root(root: ET.Element) -> str:
@@ -81,7 +83,7 @@ def _read_origin(root: ET.Element) -> Tuple[float, float]:
     return float(x), float(y)
 
 
-def _read_background(root: ET.Element) -> Tuple[str, float]:
+def _read_background(root: ET.Element, xml_file_path: str) -> Background:
 
     background_element = root.find('Background')
 
@@ -97,7 +99,25 @@ def _read_background(root: ET.Element) -> Tuple[str, float]:
     if opacity is None:
         raise AttributeMissingException('opacity', background_element)
 
-    return color, float(opacity)
+    background_color = Background.Color(color, opacity)
+
+    background_image_element = root.find('BackgroundImage')
+    background_image = None
+
+    if background_image_element is not None:
+        file = background_image_element.get('file')
+        x = float(background_image_element.get('x'))
+        y = float(background_image_element.get('y'))
+        width = float(background_image_element.get('width'))
+        height = float(background_image_element.get('height'))
+
+        if not os.path.isabs(file):
+            xml_file_basedir = os.path.dirname(xml_file_path)
+            file = os.path.join(xml_file_basedir, file)
+
+        background_image = Background.Image(file, x, y, width, height)
+
+    return Background(background_color, background_image)
 
 
 def _read_segments(root: ET.Element):

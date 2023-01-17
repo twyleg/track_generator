@@ -10,6 +10,7 @@ from track_generator.coordinate_system import Point2d, Polygon
 DEFAULT_LINE_WIDTH = 0.020
 DEFAULT_TRACK_WIDTH = 0.800
 
+DEFAULT_TRACK_COLOR = '#000000'
 
 class Painter:
 
@@ -28,7 +29,7 @@ class Painter:
         self.d.append(draw.Circle(p.x_w,
                                   p.y_w,
                                   0.010,
-                                  fill='red', stroke_width=0, stroke='black'))
+                                  fill='red', stroke_width=0, stroke=DEFAULT_TRACK_COLOR))
 
         self.d.append(draw.Text(f'{p.x_w:.3f}\n{p.y_w:.3f}', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
 
@@ -36,7 +37,7 @@ class Painter:
         self.d.append(draw.Circle(p.x_w,
                                   p.y_w,
                                   0.010,
-                                  fill='red', stroke_width=0, stroke='black'))
+                                  fill='red', stroke_width=0, stroke=DEFAULT_TRACK_COLOR))
 
         self.d.append(draw.Text(f'{p.x_w:.3f}\n{p.y_w:.3f}\nr={radius:.3f}\na={radian_angle:.1f}°', 0.1, p.x_w + 0.032, p.y_w, fill='red'))
 
@@ -45,9 +46,9 @@ class Painter:
 
     def draw_straight(self, segment: Straight):
 
-        self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
+        self.draw_polygon(segment.center_line_polygon, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
         self.draw_polygon(segment.center_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
-                            style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0")
+                            style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0,fill-opacity:0")
         # stroke-miterlimit:4;stroke-dasharray:0.08,0.16;stroke-dashoffset:0;stroke-width:0.02
 
         self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
@@ -70,7 +71,7 @@ class Painter:
             final_start_angle = start_angle - 90
 
         self.d.append(draw.Arc(segment.center_point.x_w, segment.center_point.y_w, math.fabs(segment.radius), final_start_angle, final_end_angle,
-                               cw=segment.direction_clockwise, stroke='black', stroke_width=DEFAULT_TRACK_WIDTH, fill='none'))
+                               cw=segment.direction_clockwise, stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH, fill='none'))
 
         self.d.append(draw.Arc(segment.center_point.x_w, segment.center_point.y_w, math.fabs(segment.radius) - 0.380, final_start_angle,
                                final_end_angle, cw=segment.direction_clockwise, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
@@ -105,7 +106,7 @@ class Painter:
         self.draw_point(segment.start_point_right)
 
     def draw_crosswalk(self, segment: Crosswalk):
-        self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
+        self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
         self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
         self.draw_polygon(segment.right_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
@@ -115,7 +116,7 @@ class Painter:
     def draw_intersection(self, segment: Intersection):
 
         for polygon in segment.base_line_polygons:
-            self.draw_polygon(polygon, fill='#eeee00', stroke='black', stroke_width=DEFAULT_TRACK_WIDTH)
+            self.draw_polygon(polygon, fill='#eeee00', stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
 
         for polygon in segment.corner_line_polygons:
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
@@ -138,7 +139,7 @@ class Painter:
             segment.background_polygon[6].x_w, segment.background_polygon[6].y_w,
             segment.background_polygon[7].x_w, segment.background_polygon[7].y_w,
             close=False,
-            fill='black'))
+            fill=DEFAULT_TRACK_COLOR))
 
         for polygon in segment.line_polygons:
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
@@ -157,7 +158,7 @@ class Painter:
                 polygon[2].x_w, polygon[2].y_w,
                 polygon[3].x_w, polygon[3].y_w,
                 close=False,
-                fill='black'))
+                fill=DEFAULT_TRACK_COLOR))
             # Outline
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
@@ -204,8 +205,17 @@ class Painter:
     def draw_track(self, track: Track):
         self.d = draw.Drawing(track.width, track.height, origin=track.origin, displayInline=False)
         self.d.setPixelScale(1000)
-        self.d.append(draw.Rectangle(0, 0, track.width, track.height, fill=track.background_color,
-                                     fill_opacity=track.background_opacity))
+        self.d.append(draw.Rectangle(0, 0, track.width, track.height, fill=track.background.color.color,
+                                     fill_opacity=track.background.color.opacity))
+
+        if track.background.image:
+            img = track.background.image
+            self.d.append(draw.Image(img.x, img.y,
+                                     img.width, img.height,
+                                     img.file,
+                                     embed=True,
+                                     preserveAspectRatio='none'))
+
         for segment in track.segments:
             self.draw_segment(segment)
 

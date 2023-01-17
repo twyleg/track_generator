@@ -5,6 +5,7 @@ import sys
 
 from track_generator import generator
 
+
 VERSION = '0.0.1'
 
 
@@ -23,6 +24,17 @@ def subcommand_generate_track():
     generator.generate_track(args.track_files, args.output, args.png, args.gazebo)
 
 
+def subcommand_generate_track_live():
+    parser = argparse.ArgumentParser(description='Generates a track')
+    parser.add_argument('track_file', metavar='track_file', type=str,
+                        help='a track file (XML) to generate the track from')
+    parser.add_argument('-o', '--output', dest='output', default=os.path.join(os.getcwd(), 'output'),
+                        help='Output directory for generated tracks. Default="./"')
+    args = parser.parse_args(sys.argv[2:])
+
+    generator.generate_track_live(args.track_file, args.output)
+
+
 def subcommand_generate_trajectory():
     """ TODO: Implement """
     pass
@@ -36,6 +48,8 @@ def start():
 
     if args.command == 'generate_track':
         subcommand_generate_track()
+    elif args.command == 'generate_track_live':
+        subcommand_generate_track_live()
     elif args.command == 'generate_trajectory':
         subcommand_generate_trajectory()
 

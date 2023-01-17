@@ -34,5 +34,15 @@
         <Turn direction="left" radius="1.0" radian="90.0"/>
         <TrafficIsland island_width="0.5" crosswalk_length="1.0" curve_segment_length="1.0" curvature="1.0"/>
         <Turn direction="left" radius="1.0" radian="90.0"/>
+        <Straight length="2.500"/>
+        <Turn direction="left" radius="1.0" radian="90.0"/>
+        <Turn direction="right" radius="1.0" radian="180.0"/>
+        <Straight length="1.00"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="6.0"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="6.3"/>
+        <Turn direction="right" radius="1.0" radian="90.0"/>
+        <Straight length="3.5"/>
     </Segments>
 </TrackDefinition>

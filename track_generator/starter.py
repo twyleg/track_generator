@@ -19,9 +19,11 @@ def subcommand_generate_track():
                         help='Generate output PNG (SVG only by default).')
     parser.add_argument('--gazebo', action='store_true',
                         help='Generate Gazebo model for track.')
+    parser.add_argument('--ground_truth', action='store_true',
+                        help='Generate ground truth data for track.')
     args = parser.parse_args(sys.argv[2:])
 
-    generator.generate_track(args.track_files, args.output, args.png, args.gazebo)
+    generator.generate_track(args.track_files, args.output, args.png, args.gazebo, args.ground_truth)
 
 
 def subcommand_generate_track_live():
@@ -56,3 +58,4 @@ def start():
 
 if __name__ == '__main__':
     start()
+

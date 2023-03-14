@@ -62,8 +62,6 @@ class Painter:
     def draw_arc(self, segment: Arc):
         end_angle = segment.direction_angle
         start_angle = segment.start_direction_angle
-        #end_angle = segment.start_direction_angle
-        #start_angle = segment.direction_angle
 
         if segment.direction_clockwise:
             final_end_angle = end_angle + 90
@@ -171,20 +169,20 @@ class Painter:
             self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
     def draw_clothoid(self, segment: Clothoid):
-        background = ()
+        background: tuple(float) = ()
         for p in segment.background_polygon:
             background += (p.x_w, p.y_w)
         self.d.append(draw.Lines(background[0], background[1], *background, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_TRACK_COLOR, stroke_width=2*DEFAULT_LINE_WIDTH))
-        middle_line = ()
+        middle_line: tuple(float) = ()
         for p in segment.lines[0]:
             middle_line += (p.x_w, p.y_w)
         self.d.append(draw.Lines(*middle_line, fill='none', stroke='white', stroke_width=DEFAULT_LINE_WIDTH
                         ,style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0"))
-        left_line = ()
+        left_line: tuple(float) = ()
         for p in segment.lines[1]:
             left_line += (p.x_w, p.y_w)
         self.d.append(draw.Lines(*left_line, fill='none', stroke='white', stroke_width=DEFAULT_LINE_WIDTH))
-        right_line = ()
+        right_line: tuple(float) = ()
         for p in segment.lines[2]:
             right_line += (p.x_w, p.y_w)
         self.d.append(draw.Lines(*right_line, fill='none', stroke='white', stroke_width=DEFAULT_LINE_WIDTH))

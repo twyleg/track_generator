@@ -18,6 +18,21 @@ class Side(Enum):
     RIGHT = 2
 
 
+class IntersectionDirection(Enum):
+    RIGHT = 'right'
+    LEFT = 'left'
+    STRAIGHT = 'straight'
+
+class ClothoidDirection(Enum):
+    LEFT = -1
+    RIGHT = 1
+
+
+class ClothoidType(Enum):
+    OPEND = 'opend'
+    CLOSING = 'closing'
+
+
 def calc_crosswalk_lines(length: float, width: float, coordinate_system: CartesianSystem2d) -> List[Polygon]:
     polygons: List[Polygon] = []
     pack_width = CROSSWALK_LINE_WIDTH + CROSSWALK_LINE_GAP
@@ -190,7 +205,7 @@ class Crosswalk(Straight):
 
 
 class Intersection(Segment):
-    def __init__(self, length: float, direction: str):
+    def __init__(self, length: float, direction: IntersectionDirection):
         super().__init__()
         self.length = length
         self.direction = direction
@@ -274,9 +289,9 @@ class Intersection(Segment):
 
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
-        if self.direction == 'right':
+        if self.direction == IntersectionDirection.RIGHT:
             new_end = [self.length/2, -self.length/2, -90]
-        elif self.direction == 'straight':
+        elif self.direction == IntersectionDirection.STRAIGHT:
             new_end = [self.length, 0, 0]
         else:
             new_end = [self.length/2, self.length/2, 90]
@@ -290,15 +305,15 @@ class Intersection(Segment):
 
 
 class Gap(Straight):
-    def __init__(self, length: float, direction: str):
+    def __init__(self, length: float, direction: IntersectionDirection):
         super().__init__(length)
         self.direction = direction
     
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
-        if self.direction == 'right':
+        if self.direction == IntersectionDirection.RIGHT:
             new_end = [self.length/2, -self.length/2, -90]
-        elif self.direction == 'straight':
+        elif self.direction == IntersectionDirection.STRAIGHT:
             new_end = [self.length, 0, 0]
         else:
             new_end = [self.length/2, self.length/2, 90]
@@ -457,52 +472,51 @@ class TrafficIsland(Segment):
         self.calc_crosswalk_lines()
 
 class Clothoid(Segment):
-    def __init__(self, a: float, angle: float, angle_offset: float, direction: str, type: str):
+    def __init__(self, a: float, angle: float, angle_offset: float, direction: ClothoidDirection, type: ClothoidType):
         super().__init__()
         self.a = a
         self.angle = angle
         self.angle_offset = angle_offset
         self.direction = direction
         self.type = type
-        self.lines: List[Polygon]= []
+        self.lines: List[Polygon] = []
         self.background_polygon: List[Polygon] = []
     
-    def get_int(self, number):
+    def get_int(self, number: float) -> int:
         return int(number + 0.5 if number >= 0 else number -0.5)
     
-    def move_point(self, point, postponmet):
+    def move_point(self, point: List[float], postponmet: List[float]) -> List[float]:
         return [point[0] + postponmet[0], point[1] + postponmet[1], point[2]]
 
-    def rotate_point(self, point, radian):
+    def rotate_point(self, point: List[float], radian: float) -> List[float]:
         return [point[0]*cos(radian)+point[1]*sin(radian), -point[0]*sin(radian)+point[1]*cos(radian), point[2]]
 
-    def get_clothoid_point(self, l: float, direction: float):
+    def get_clothoid_point(self, length: float, direction: float):
         toggle = 1
         x = 0
         y = 0 
         for loops in range(20):
-            x_ = toggle*l**(1+4*loops)/(self.a**(4*loops)*factorial(2*loops)*(1+4*loops)*2**(2*loops))
-            y_ = toggle*l**(3+4*loops)/(self.a**(2+4*loops)*factorial(1+2*loops)*(3+4*loops)*2**(1+2*loops))
+            x_ = toggle*length**(1+4*loops)/(self.a**(4*loops)*factorial(2*loops)*(1+4*loops)*2**(2*loops))
+            y_ = toggle*length**(3+4*loops)/(self.a**(2+4*loops)*factorial(1+2*loops)*(3+4*loops)*2**(1+2*loops))
             x += x_
             y += y_
             toggle *= -1
-        return [x ,y*direction, l]
+        return [x ,y*direction, length]
 
-    def get_inverted_points(self, points):
-        direction = -1 if self.direction == 'left' else 1
-        angle = radians(self.angle) * direction
+    def get_inverted_points(self, points: List[List[float]]) -> List[List[float]]:
+        angle = radians(self.angle) * self.direction.value
         new_points = []
         start = points[0]
-        end = self.move_point(points[-1], [-start[0],-start[1]])
+        end = self.move_point(points[-1], [-start[0], -start[1]])
         for point in points:
-            point = self.move_point(point, [-start[0],-start[1]])
+            point = self.move_point(point, [-start[0], -start[1]])
             point = [(-point[0]+end[0]), (point[1]-end[1]), point[2]]
             point = self.rotate_point(point, angle)
-            new_points.append(self.move_point(point, [start[0],start[1]]))
+            new_points.append(self.move_point(point, [start[0], start[1]]))
         return new_points[::-1]
 
-    def get_clothoid(self):
-        direction = 1 if self.direction == 'left' else -1
+    def get_clothoid(self) -> List[List[float]]:
+        direction = self.direction.value * -1
         arc_length_start = self.a*sqrt(2*radians(self.angle_offset))
         arc_length_end = self.a*sqrt(2*radians(self.angle_offset + self.angle))
         points = []
@@ -516,24 +530,23 @@ class Clothoid(Segment):
             points[i] = self.rotate_point(self.move_point(point, first_point), radians(self.angle_offset)*direction)
         return points
     
-    def get_moved_clothoid(self, points, offset):
+    def get_moved_clothoid(self, points: List[List[float]], offset: float) -> List[List[float]]:
         new_points = []
-        direction = -1 if self.direction == 'left' else 1
         for point in points:
-            angle = (point[2]**2/(2*self.a**2) - radians(self.angle_offset)) * direction
+            angle = (point[2]**2/(2*self.a**2) - radians(self.angle_offset)) * self.direction.value
             new_points.append([point[0] + offset*sin(angle), point[1] + offset*cos(angle), point[2]])
         return new_points
 
-    def calc(self, prev_segment):
+    def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
-        direction = 1 if self.direction == 'left' else -1
+        direction = self.direction.value * -1
         self.direction_angle += self.angle * direction
 
         middle_points = self.get_clothoid()
         left_lane_points = self.get_moved_clothoid(middle_points, +LINE_OFFSET)
         right_line_points = self.get_moved_clothoid(middle_points, -LINE_OFFSET)
 
-        if self.type == 'opend':
+        if self.type == ClothoidType.OPEND:
             middle_points = self.get_inverted_points(middle_points)
             left_lane_points = self.get_inverted_points(left_lane_points)
             right_line_points = self.get_inverted_points(right_line_points)
@@ -546,7 +559,3 @@ class Clothoid(Segment):
 
         background_polygon = right_line_points + left_lane_points[::-1]
         self.background_polygon = [Point2d(p[0],p[1], self.start_coordinate_system) for p in background_polygon]
-
-
-
-

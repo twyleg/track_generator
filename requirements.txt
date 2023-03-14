@@ -1,6 +1,6 @@
 pytransform3d
 numpy
-drawSvg
+drawsvg==1.9
 twine
 wheel
 watchdog

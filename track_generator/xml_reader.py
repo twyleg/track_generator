@@ -204,20 +204,19 @@ def _read_crosswalk_element(crosswalk_element: ET.Element):
 
 def _read_intersection_element(intersection_element: ET.Element):
     length = intersection_element.get('length')
-    direction = intersection_element.get('direction')
+    direction = IntersectionDirection(str(intersection_element.get('direction')))
     if length is None:
         raise AttributeMissingException('length', intersection_element)
-    return Intersection(float(length), str(direction))
+    return Intersection(float(length), direction)
 
 
 def _read_gap_element(straight_element: ET.Element):
     length = straight_element.get('length')
-    direction = straight_element.get('direction')
-
+    direction = IntersectionDirection(str(straight_element.get('direction')))
     if length is None:
         raise AttributeMissingException('length', straight_element)
 
-    return Gap(float(length), str(direction))
+    return Gap(float(length), direction)
 
 
 def _read_spot_element(spot_element: ET.Element) -> ParkingArea.ParkingLot.Spot:
@@ -273,7 +272,7 @@ def _read_clothoid_element(clothoid_element: ET.Element):
     a = clothoid_element.get('a')
     angle = clothoid_element.get('angle')
     angle_offset = clothoid_element.get('angle_offset')
-    direction = clothoid_element.get('direction')
-    type = clothoid_element.get('type')
+    direction = ClothoidDirection.RIGHT if clothoid_element.get('direction') == 'right' else ClothoidDirection.LEFT
+    type = ClothoidType(str(clothoid_element.get('type')))
 
-    return Clothoid(float(a), float(angle), float(angle_offset), str(direction), str(type))
+    return Clothoid(float(a), float(angle), float(angle_offset), direction, str(type))

@@ -268,7 +268,7 @@ def _read_traffic_island_element(traffic_island_element: ET.Element):
 
     return TrafficIsland(float(island_width), float(crosswalk_length), float(curve_segment_length), float(curvature))
 
-def _read_clothoid_element(clothoid_element: ET.Element):
+def _read_clothoid_element(clothoid_element: ET.Element) -> Clothoid:
     a = clothoid_element.get('a')
     angle = clothoid_element.get('angle')
     angle_offset = clothoid_element.get('angle_offset')

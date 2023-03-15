@@ -2,7 +2,7 @@ from xml.etree import cElementTree as ET, ElementTree
 from xml.etree import ElementTree
 from xml.dom import minidom
 
-from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea, TrafficIsland, Clothoid
+from track_generator.track import Segment, Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea, TrafficIsland, Clothoid
 
 class GroundTruthGenerator:
 
@@ -18,7 +18,7 @@ class GroundTruthGenerator:
         with open(self.output_directory + 'ground_truth.xml', 'w') as f:
             f.write(minidom.parseString(ET.tostring(self.root, 'utf-8')).toprettyxml(indent='\t'))
 
-    def generate_segment(self, segment):
+    def generate_segment(self, segment: Segment):
         if isinstance(segment, Start):
             pass
         elif isinstance(segment, (Straight, ParkingArea, Gap, Crosswalk)):

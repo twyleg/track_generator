@@ -491,7 +491,7 @@ class Clothoid(Segment):
     def rotate_point(self, point: List[float], radian: float) -> List[float]:
         return [point[0]*cos(radian)+point[1]*sin(radian), -point[0]*sin(radian)+point[1]*cos(radian), point[2]]
 
-    def get_clothoid_point(self, length: float, direction: float):
+    def get_clothoid_point(self, length: float, direction: float) -> List[List[float]]:
         toggle = 1
         x = 0
         y = 0 
@@ -537,7 +537,7 @@ class Clothoid(Segment):
             new_points.append([point[0] + offset*sin(angle), point[1] + offset*cos(angle), point[2]])
         return new_points
 
-    def calc(self, prev_segment) -> None:
+    def calc(self, prev_segment: Segment) -> None:
         super().calc(prev_segment)
         direction = self.direction.value * -1
         self.direction_angle += self.angle * direction

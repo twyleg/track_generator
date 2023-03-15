@@ -4,13 +4,14 @@ import math
 import drawSvg as draw
 
 from typing import Optional
-from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea, TrafficIsland
+from track_generator.track import Track, Start, Straight, Arc, Crosswalk, Intersection, Gap, ParkingArea, TrafficIsland, Clothoid
 from track_generator.coordinate_system import Point2d, Polygon
 
 DEFAULT_LINE_WIDTH = 0.020
 DEFAULT_TRACK_WIDTH = 0.800
 
 DEFAULT_TRACK_COLOR = '#000000'
+DEFAULT_LINE_COLOR = '#ffffff'
 
 class Painter:
 
@@ -47,12 +48,12 @@ class Painter:
     def draw_straight(self, segment: Straight):
 
         self.draw_polygon(segment.center_line_polygon, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
-        self.draw_polygon(segment.center_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+        self.draw_polygon(segment.center_line_polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                             style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0,fill-opacity:0")
         # stroke-miterlimit:4;stroke-dasharray:0.08,0.16;stroke-dashoffset:0;stroke-width:0.02
 
-        self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
-        self.draw_polygon(segment.right_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.left_line_polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.right_line_polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
     def draw_straight_verbose(self, segment: Straight):
         self.draw_point(segment.center_line_polygon[0])
@@ -74,13 +75,13 @@ class Painter:
                                cw=segment.direction_clockwise, stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH, fill='none'))
 
         self.d.append(draw.Arc(segment.center_point.x_w, segment.center_point.y_w, math.fabs(segment.radius) - 0.380, final_start_angle,
-                               final_end_angle, cw=segment.direction_clockwise, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
+                               final_end_angle, cw=segment.direction_clockwise, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
         self.d.append(draw.Arc(segment.center_point.x_w, segment.center_point.y_w, math.fabs(segment.radius) + 0.380, final_start_angle,
-                               final_end_angle, cw=segment.direction_clockwise, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
+                               final_end_angle, cw=segment.direction_clockwise, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none'))
 
         self.d.append(draw.Arc(segment.center_point.x_w, segment.center_point.y_w, math.fabs(segment.radius), final_start_angle, final_end_angle,
-                               cw=segment.direction_clockwise, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+                               cw=segment.direction_clockwise, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                                style="stroke-miterlimit:4;stroke-dasharray:0.160,0.160;stroke-dashoffset:0"))
 
     def draw_arc_verbose(self, segment: Arc):
@@ -107,11 +108,11 @@ class Painter:
 
     def draw_crosswalk(self, segment: Crosswalk):
         self.draw_polygon(segment.center_line_polygon, fill='#eeee00', stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
-        self.draw_polygon(segment.left_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
-        self.draw_polygon(segment.right_line_polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.left_line_polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+        self.draw_polygon(segment.right_line_polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.line_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=0.03, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=0.03, fill='none')
 
     def draw_intersection(self, segment: Intersection):
 
@@ -119,13 +120,13 @@ class Painter:
             self.draw_polygon(polygon, fill='#eeee00', stroke=DEFAULT_TRACK_COLOR, stroke_width=DEFAULT_TRACK_WIDTH)
 
         for polygon in segment.corner_line_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.stop_line_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH*2, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH*2, fill='none')
 
         for polygon in segment.center_line_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none',
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none',
                             style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0")
 
     def draw_traffic_island(self, segment: TrafficIsland):
@@ -142,10 +143,10 @@ class Painter:
             fill=DEFAULT_TRACK_COLOR))
 
         for polygon in segment.line_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.crosswalk_lines_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=0.03, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=0.03, fill='none')
 
     def draw_parking_area(self, segment: ParkingArea):
         self.draw_straight(segment)
@@ -160,20 +161,39 @@ class Painter:
                 close=False,
                 fill=DEFAULT_TRACK_COLOR))
             # Outline
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.spot_seperator_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
         for polygon in segment.blocker_polygons:
-            self.draw_polygon(polygon, stroke='white', stroke_width=DEFAULT_LINE_WIDTH, fill='none')
+            self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill='none')
 
+    def draw_clothoid(self, segment: Clothoid):
+        background: tuple(float) = ()
+        for p in segment.background_polygon:
+            background += (p.x_w, p.y_w)
+        self.d.append(draw.Lines(background[0], background[1], *background, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_TRACK_COLOR, stroke_width=2*DEFAULT_LINE_WIDTH))
+        middle_line: tuple(float) = ()
+        for p in segment.lines[0]:
+            middle_line += (p.x_w, p.y_w)
+        self.d.append(draw.Lines(*middle_line, fill='none', stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH
+                        ,style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0"))
+        left_line: tuple(float) = ()
+        for p in segment.lines[1]:
+            left_line += (p.x_w, p.y_w)
+        self.d.append(draw.Lines(*left_line, fill='none', stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH))
+        right_line: tuple(float) = ()
+        for p in segment.lines[2]:
+            right_line += (p.x_w, p.y_w)
+        self.d.append(draw.Lines(*right_line, fill='none', stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH))
+    
     def draw_template_based_segment(self, segment, template_file_path: str):
         self.d.append(draw.Image(segment.start_point_center.x_w - (segment.width / 2.0), segment.start_point_center.y_w, segment.width, segment.height,
                                  template_file_path,
                                  embed=True,
                                  transform=f'rotate({-(segment.direction_angle - 90.0)} , {segment.start_point_center.x_w}, {-segment.start_point_center.y_w})'))
-
+    
     def draw_segment(self, segment):
         if isinstance(segment, Start):
             pass
@@ -191,6 +211,8 @@ class Painter:
             self.draw_intersection(segment)
         elif isinstance(segment, TrafficIsland):
             self.draw_traffic_island(segment)
+        elif isinstance(segment, Clothoid):
+            self.draw_clothoid(segment)
         else:
             raise RuntimeError()
 

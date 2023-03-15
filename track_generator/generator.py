@@ -6,6 +6,7 @@ from track_generator import xml_reader
 from track_generator.painter import Painter
 from track_generator.gazebo_model_generator import GazeboModelGenerator
 from track_generator.gui.track_live_view import TrackLiveView
+from track_generator.ground_truth_generator import GroundTruthGenerator
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -22,7 +23,7 @@ def _get_track_name_from_file_path(file_path: str) -> str:
 
 
 def generate_track(track_files: List[str], root_output_directory: str, generate_png=False,
-                   generate_gazebo_project=False) -> List[str]:
+                   generate_gazebo_project=False, generate_ground_truth=False) -> List[str]:
     """
     Generate tracks (SVG, Gazebo project, etc) from given track files (XML)
     :param track_files: List of track files
@@ -56,6 +57,10 @@ def generate_track(track_files: List[str], root_output_directory: str, generate_
 
         painter.draw_track_verbose(track)
         painter.save_svg(track_name, track_output_directory, file_name_postfix='_verbose')
+
+        if generate_ground_truth:
+            ground_truth_generator = GroundTruthGenerator(track_name, track_output_directory)
+            ground_truth_generator.generate_ground_truth(track)
     return track_output_directories
 
 

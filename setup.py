@@ -22,7 +22,7 @@ setup(
     install_requires=[
         'pytransform3d',
         'numpy',
-        'drawSvg',
+        'drawsvg==1.9',
         'watchdog',
         'PySide6'
     ],

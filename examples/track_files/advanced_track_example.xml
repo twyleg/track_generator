@@ -5,7 +5,7 @@
     <Segments>
         <Start x="1.0" y="2.0" direction_angle="90.0"/>
         <Straight length="6.140"/>
-        <Crosswalk length="0.400"/>
+        <Crosswalk length="0.400" direction="straight"/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="6.0"/>
         <Turn direction="right" radius="0.750" radian="180"/>
@@ -16,7 +16,7 @@
         <Straight length="2.0"/>
         <Turn direction="right" radius="1.0" radian="135.0"/>
         <Straight length="1.0"/>
-        <Intersection length="1.600"/>
+        <Intersection length="1.600" direction="straight"/>
         <Straight length="1.0"/>
         <Turn direction="right" radius="1.0" radian="45.0"/>
         <Straight length="2.0"/>
@@ -27,7 +27,7 @@
         <Straight length="1.730"/>
         <Turn direction="right" radius="1.0" radian="45.0"/>
         <Straight length="0.820"/>
-        <Gap length="1.600"/>
+        <Gap length="1.600" direction="straight"/>
         <Straight length="1.0"/>
         <Turn direction="right" radius="1.0" radian="135.0"/>
         <Straight length="6.0"/>

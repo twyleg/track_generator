@@ -8,9 +8,9 @@
         <Crosswalk length="0.800"/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="0.500"/>
-        <Intersection length="1.600"/>
+        <Intersection length="1.600" direction="straight"/>
         <Turn direction="left" radius="0.800" radian="270.0"/>
-        <Gap length="1.600"/>
+        <Gap length="1.600" direction="straight"/>
         <ParkingArea length="4.0">
             <RightLots>
                 <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">

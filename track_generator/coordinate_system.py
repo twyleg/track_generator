@@ -8,15 +8,12 @@ from typing import Optional, List
 class WorldCoordinateSystem:
     def __init__(self):
         self.local_to_world = pytr.transform_from(
-            pyrot.matrix_from_axis_angle(np.array([0.0, 0.0, 1.0, 0.0])),
-            np.array([0.0, 0.0, 0.0])
+            pyrot.matrix_from_axis_angle(np.array([0.0, 0.0, 1.0, 0.0])), np.array([0.0, 0.0, 0.0])
         )
 
 
 class CartesianSystem2d:
-
-    def __init__(self, x: float, y: float, yaw: float, parent: Optional['CartesianSystem'] = WorldCoordinateSystem()):
-
+    def __init__(self, x: float, y: float, yaw: float, parent: Optional["CartesianSystem"] = WorldCoordinateSystem()):
         p = np.array([x, y, 0.0])
         a = np.array([0.0, 0.0, 1.0, np.deg2rad(yaw)])
         local_to_parent = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
@@ -30,12 +27,14 @@ class Point2d:
         self.x_l = x_l
         self.y_l = y_l
 
-        point_world = pytr.transform(self.local_coordinate_system.local_to_world, np.array([self.x_l, self.y_l, 0.0, 1.0]))
+        point_world = pytr.transform(
+            self.local_coordinate_system.local_to_world, np.array([self.x_l, self.y_l, 0.0, 1.0])
+        )
         self.x_w = point_world[0]
         self.y_w = point_world[1]
 
     def __str__(self):
-        return f'Local: ({self.x_l},{self.y_l}), World: ({self.x_w},{self.y_w})'
+        return f"Local: ({self.x_l},{self.y_l}), World: ({self.x_w},{self.y_w})"
 
 
 Polygon = List[Point2d]

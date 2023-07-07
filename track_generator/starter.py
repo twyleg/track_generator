@@ -1,7 +1,7 @@
 # Copyright (C) 2022 twyleg
-import os
 import argparse
 import sys
+from pathlib import Path
 
 from track_generator import __version__
 from track_generator import generator
@@ -16,7 +16,7 @@ def subcommand_generate_track():
         "-o",
         "--output",
         dest="output",
-        default=os.path.join(os.getcwd(), "output"),
+        default=Path.cwd() / "output",
         help='Output directory for generated tracks. Default="./"',
     )
     parser.add_argument("--png", action="store_true", help="Generate output PNG (SVG only by default).")
@@ -36,12 +36,13 @@ def subcommand_generate_track_live():
         "-o",
         "--output",
         dest="output",
-        default=os.path.join(os.getcwd(), "output"),
+        default=Path.cwd() / "output",
         help='Output directory for generated tracks. Default="./"',
     )
     args = parser.parse_args(sys.argv[2:])
 
-    generator.generate_track_live(args.track_file, args.output)
+    track_filepath = Path(args.track_file)
+    generator.generate_track_live(track_filepath, args.output)
 
 
 def subcommand_generate_trajectory():

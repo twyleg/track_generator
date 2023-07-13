@@ -1,3 +1,4 @@
+include track_generator/xsd/*.xsd
 include track_generator/gui/qml/*.qml
 include track_generator/segment_templates/*.svg
 include track_generator/gazebo_model_templates/*.template

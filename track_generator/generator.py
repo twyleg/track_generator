@@ -14,7 +14,7 @@ from watchdog.events import FileSystemEventHandler
 
 
 def _create_output_directory_if_required(output_dirpath: Path):
-    output_dirpath.mkdir(exist_ok=True)
+    output_dirpath.mkdir(parents=True, exist_ok=True)
 
 
 def _get_track_name_from_file_path(track_filepath: Path) -> str:

@@ -1,0 +1,184 @@
+<xs:schema
+        id="track"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="unqualified">
+
+    <!--   <xs:complexType name="WebdavType">-->
+    <!--       <xs:sequence>-->
+    <!--           <xs:element name="Hostname" type="xs:string"/>-->
+    <!--           <xs:element name="RootDir" type="xs:string"/>-->
+    <!--           <xs:element name="User" type="xs:string"/>-->
+    <!--           <xs:element name="Pass" type="xs:string"/>-->
+    <!--       </xs:sequence>-->
+    <!--   </xs:complexType>-->
+
+    <!--  <xs:complexType name="PaulieboxType">-->
+    <!--      <xs:sequence>-->
+    <!--          <xs:element name="Logging" type="logging:LoggingType"/>-->
+    <!--          <xs:element name="Webdav" type="WebdavType"/>-->
+    <!--          <xs:element name="DownloadDir" type="xs:string"/>-->
+    <!--          <xs:element name="FrontendConfigPath" type="xs:string"/>-->
+    <!--      </xs:sequence>-->
+    <!--  </xs:complexType>-->
+
+    <!--  <xs:element name="Pauliebox" type="PaulieboxType"/>-->
+
+    <!--       <xs:simpleType name="LogLevelEnum">-->
+    <!--		   <xs:restriction base = "xs:string">-->
+    <!--			   <xs:enumeration value="Debug"/>-->
+    <!--			   <xs:enumeration value="Info"/>-->
+    <!--			   <xs:enumeration value="Warn"/>-->
+    <!--			   <xs:enumeration value="Error"/>-->
+    <!--		   </xs:restriction>-->
+    <!--	   </xs:simpleType>-->
+
+    <!--	   <xs:complexType name="ModuleType">-->
+    <!--		   <xs:attribute name="name" type="xs:string"/>-->
+    <!--		   <xs:attribute name="logLevel" type="logging:LogLevelEnum"/>-->
+    <!--	   </xs:complexType>-->
+
+    <xs:simpleType name="TwoWayDirectionEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="left"/>
+            <xs:enumeration value="right"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ThreeWayDirectionEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="left"/>
+            <xs:enumeration value="right"/>
+            <xs:enumeration value="straight"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:complexType name="SizeType">
+        <xs:attribute name="width" type="xs:float"/>
+        <xs:attribute name="height" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="OriginType">
+        <xs:attribute name="x" type="xs:float"/>
+        <xs:attribute name="y" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="BackgroundType">
+        <xs:attribute name="color" type="xs:string"/>
+        <xs:attribute name="opacity" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="BackgroundImageType">
+        <xs:attribute name="file" type="xs:string"/>
+        <xs:attribute name="x" type="xs:float"/>
+        <xs:attribute name="y" type="xs:float"/>
+        <xs:attribute name="width" type="xs:float"/>
+        <xs:attribute name="height" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="StartSegmentType">
+        <xs:attribute name="x" type="xs:float"/>
+        <xs:attribute name="y" type="xs:float"/>
+        <xs:attribute name="direction_angle" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="StraightSegmentType">
+        <xs:attribute name="length" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="CrosswalkSegmentType">
+        <xs:attribute name="length" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="TurnSegmentType">
+        <xs:attribute name="direction" type="TwoWayDirectionEnumType"/>
+        <xs:attribute name="radius" type="xs:float"/>
+        <xs:attribute name="radian" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="IntersectionSegmentType">
+        <xs:attribute name="length" type="xs:float"/>
+        <xs:attribute name="direction" type="ThreeWayDirectionEnumType"/>
+    </xs:complexType>
+
+    <xs:complexType name="GapSegmentType">
+        <xs:attribute name="length" type="xs:float"/>
+        <xs:attribute name="direction" type="ThreeWayDirectionEnumType"/>
+    </xs:complexType>
+
+    <xs:simpleType name="ParkingLotSpotEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="free"/>
+            <xs:enumeration value="blocked"/>
+            <xs:enumeration value="occupied"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ParkingAreaSegmentLotsParkingLotSpotType">
+        <xs:attribute name="type" type="ParkingLotSpotEnumType"/>
+        <xs:attribute name="length" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="ParkingAreaSegmentLotsParkingLotType">
+        <xs:sequence>
+            <xs:element name="Spot" type="ParkingAreaSegmentLotsParkingLotSpotType" minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="start" type="xs:float"/>
+        <xs:attribute name="depth" type="xs:float"/>
+        <xs:attribute name="opening_ending_angle" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="ParkingAreaSegmentLotsType">
+        <xs:sequence>
+            <xs:element name="ParkingLot" type="ParkingAreaSegmentLotsParkingLotType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ParkingAreaSegmentType">
+        <xs:sequence>
+            <xs:element name="RightLots" type="ParkingAreaSegmentLotsType"/>
+            <xs:element name="LeftLots" type="ParkingAreaSegmentLotsType"/>
+        </xs:sequence>
+        <xs:attribute name="length" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="TrafficIslandSegmentType">
+        <xs:attribute name="island_width" type="xs:float"/>
+        <xs:attribute name="crosswalk_length" type="xs:float"/>
+        <xs:attribute name="curve_segment_length" type="xs:float"/>
+        <xs:attribute name="curvature" type="xs:float"/>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentsType">
+        <xs:sequence>
+            <xs:element name="Start" type="StartSegmentType"/>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Straight" type="StraightSegmentType"/>
+                <xs:element name="Crosswalk" type="CrosswalkSegmentType"/>
+                <xs:element name="Turn" type="TurnSegmentType"/>
+                <xs:element name="Intersection" type="IntersectionSegmentType"/>
+                <xs:element name="Gap" type="GapSegmentType"/>
+                <xs:element name="ParkingArea" type="ParkingAreaSegmentType"/>
+                <xs:element name="TrafficIsland" type="TrafficIslandSegmentType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TrackDefinitionType">
+        <xs:sequence>
+            <xs:element name="Size" type="SizeType"/>
+            <xs:element name="Origin" type="OriginType"/>
+            <xs:choice>
+                <xs:element name="Background" type="BackgroundType"/>
+                <xs:element name="BackgroundImage" type="BackgroundImageType"/>
+            </xs:choice>
+            <xs:element name="Segments" type="SegmentsType"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:element name="TrackDefinition" type="TrackDefinitionType"/>
+
+</xs:schema>

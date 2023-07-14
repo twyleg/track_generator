@@ -307,6 +307,8 @@ https://img.shields.io/travis/com/python-versioneer/python-versioneer.svg
 # pylint:disable=too-few-public-methods,redefined-outer-name,consider-using-with
 # pylint:disable=attribute-defined-outside-init,too-many-arguments
 
+# mypy: ignore-errors
+
 import configparser
 import errno
 import json

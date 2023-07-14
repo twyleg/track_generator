@@ -14,6 +14,6 @@
                <Obstacle w="0.3" h="0.3" d="0.3" rot="0.0" lon_offset="0.5" lat_offset="0.2"/>
         </Turn>
         <Straight length="0.500"/>
-        <Intersection length="1.600"/>
+        <Intersection length="1.600" direction="straight"/>
     </Segments>
 </TrackDefinition>

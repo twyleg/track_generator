@@ -1,9 +1,11 @@
 # Copyright (C) 2022 twyleg
 import os
 import math
+from pathlib import Path
+
 import drawSvg as draw
 
-from typing import Optional
+from typing import Optional, List
 from track_generator.track import (
     Track,
     Start,
@@ -15,6 +17,8 @@ from track_generator.track import (
     ParkingArea,
     TrafficIsland,
     Clothoid,
+    BackgroundColor,
+    BackgroundImage,
 )
 from track_generator.coordinate_system import Point2d, Polygon
 
@@ -30,6 +34,7 @@ class Painter:
         self.d: Optional[draw.Drawing] = None
 
     def draw_polygon(self, polygon: Polygon, **kwargs) -> None:
+        assert self.d
         if len(polygon) < 2:
             return
         for i in range(1, len(polygon)):
@@ -38,13 +43,13 @@ class Painter:
             self.d.append(draw.Line(p0.x_w, p0.y_w, p1.x_w, p1.y_w, **kwargs))
 
     def draw_point(self, p: Point2d):
+        assert self.d
         self.d.append(draw.Circle(p.x_w, p.y_w, 0.010, fill="red", stroke_width=0, stroke=DEFAULT_TRACK_COLOR))
-
         self.d.append(draw.Text(f"{p.x_w:.3f}\n{p.y_w:.3f}", 0.1, p.x_w + 0.032, p.y_w, fill="red"))
 
     def draw_arc_center_point(self, p: Point2d, radian_angle, radius):
+        assert self.d
         self.d.append(draw.Circle(p.x_w, p.y_w, 0.010, fill="red", stroke_width=0, stroke=DEFAULT_TRACK_COLOR))
-
         self.d.append(
             draw.Text(
                 f"{p.x_w:.3f}\n{p.y_w:.3f}\nr={radius:.3f}\na={radian_angle:.1f}°",
@@ -87,23 +92,26 @@ class Painter:
         self.draw_point(segment.right_line_polygon[0])
 
     def draw_arc(self, segment: Arc):
-        end_angle = segment.direction_angle
-        start_angle = segment.start_direction_angle
+        assert segment.direction_angle is not None
+        assert segment.start_direction_angle is not None
+        assert segment.center_point
+        assert self.d
 
         if segment.direction_clockwise:
-            final_end_angle = end_angle + 90
-            final_start_angle = start_angle + 90
+            rotation_angle = +90.0
         else:
-            final_end_angle = end_angle - 90
-            final_start_angle = start_angle - 90
+            rotation_angle = -90.0
+
+        end_angle = segment.direction_angle + rotation_angle
+        start_angle = segment.start_direction_angle + rotation_angle
 
         self.d.append(
             draw.Arc(
                 segment.center_point.x_w,
                 segment.center_point.y_w,
                 math.fabs(segment.radius),
-                final_start_angle,
-                final_end_angle,
+                start_angle,
+                end_angle,
                 cw=segment.direction_clockwise,
                 stroke=DEFAULT_TRACK_COLOR,
                 stroke_width=DEFAULT_TRACK_WIDTH,
@@ -116,8 +124,8 @@ class Painter:
                 segment.center_point.x_w,
                 segment.center_point.y_w,
                 math.fabs(segment.radius) - 0.380,
-                final_start_angle,
-                final_end_angle,
+                start_angle,
+                end_angle,
                 cw=segment.direction_clockwise,
                 stroke=DEFAULT_LINE_COLOR,
                 stroke_width=DEFAULT_LINE_WIDTH,
@@ -130,8 +138,8 @@ class Painter:
                 segment.center_point.x_w,
                 segment.center_point.y_w,
                 math.fabs(segment.radius) + 0.380,
-                final_start_angle,
-                final_end_angle,
+                start_angle,
+                end_angle,
                 cw=segment.direction_clockwise,
                 stroke=DEFAULT_LINE_COLOR,
                 stroke_width=DEFAULT_LINE_WIDTH,
@@ -144,8 +152,8 @@ class Painter:
                 segment.center_point.x_w,
                 segment.center_point.y_w,
                 math.fabs(segment.radius),
-                final_start_angle,
-                final_end_angle,
+                start_angle,
+                end_angle,
                 cw=segment.direction_clockwise,
                 stroke=DEFAULT_LINE_COLOR,
                 stroke_width=DEFAULT_LINE_WIDTH,
@@ -155,31 +163,37 @@ class Painter:
         )
 
     def draw_arc_verbose(self, segment: Arc):
-        end_angle = segment.direction_angle
-        start_angle = segment.start_direction_angle
+        assert segment.direction_angle is not None
+        assert segment.start_direction_angle is not None
+        assert segment.center_point
+        assert segment.start_point_center
+        assert segment.start_point_left
+        assert segment.start_point_right
+        assert self.d
 
         if segment.direction_clockwise:
-            final_end_angle = end_angle + 90
-            final_start_angle = start_angle + 90
+            rotation_angle = +90.0
         else:
-            final_end_angle = end_angle - 90
-            final_start_angle = start_angle - 90
+            rotation_angle = -90.0
+
+        end_angle = segment.direction_angle + rotation_angle
+        start_angle = segment.start_direction_angle + rotation_angle
 
         p = draw.Path(fill="none", stroke="blue", stroke_width=DEFAULT_LINE_WIDTH)
         p.arc(
             segment.center_point.x_w,
             segment.center_point.y_w,
             math.fabs(segment.radius),
-            final_end_angle,
-            final_start_angle,
+            end_angle,
+            start_angle,
             cw=not segment.direction_clockwise,
         )
         p.arc(
             segment.center_point.x_w,
             segment.center_point.y_w,
             0,
-            final_start_angle,
-            final_end_angle,
+            start_angle,
+            end_angle,
             cw=segment.direction_clockwise,
             includeL=True,
         )
@@ -225,6 +239,7 @@ class Painter:
             )
 
     def draw_traffic_island(self, segment: TrafficIsland):
+        assert self.d
         self.d.append(
             draw.Lines(
                 segment.background_polygon[0].x_w,
@@ -255,6 +270,7 @@ class Painter:
             self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=0.03, fill="none")
 
     def draw_parking_area(self, segment: ParkingArea):
+        assert self.d
         self.draw_straight(segment)
 
         for polygon in segment.outline_polygon:
@@ -283,9 +299,24 @@ class Painter:
             self.draw_polygon(polygon, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH, fill="none")
 
     def draw_clothoid(self, segment: Clothoid):
-        background: tuple(float) = ()
+        assert self.d
+        # background: tuple(float) = ()
+        # for p in segment.background_polygon:
+        #     background += (p.x_w, p.y_w)
+        # self.d.append(
+        #     draw.Lines(
+        #         background[0],
+        #         background[1],
+        #         *background,
+        #         fill=DEFAULT_TRACK_COLOR,
+        #         stroke=DEFAULT_TRACK_COLOR,
+        #         stroke_width=2 * DEFAULT_LINE_WIDTH,
+        #     )
+        # )
+        background: List[float] = []
         for p in segment.background_polygon:
-            background += (p.x_w, p.y_w)
+            background.append(p.x_w)
+            background.append(p.y_w)
         self.d.append(
             draw.Lines(
                 background[0],
@@ -296,9 +327,11 @@ class Painter:
                 stroke_width=2 * DEFAULT_LINE_WIDTH,
             )
         )
-        middle_line: tuple(float) = ()
+
+        middle_line: List[float] = []
         for p in segment.lines[0]:
-            middle_line += (p.x_w, p.y_w)
+            middle_line.append(p.x_w)
+            middle_line.append(p.y_w)
         self.d.append(
             draw.Lines(
                 *middle_line,
@@ -308,16 +341,20 @@ class Painter:
                 style="stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0",
             )
         )
-        left_line: tuple(float) = ()
+        left_line: List[float] = []
         for p in segment.lines[1]:
-            left_line += (p.x_w, p.y_w)
+            left_line.append(p.x_w)
+            left_line.append(p.y_w)
         self.d.append(draw.Lines(*left_line, fill="none", stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH))
-        right_line: tuple(float) = ()
+
+        right_line: List[float] = []
         for p in segment.lines[2]:
-            right_line += (p.x_w, p.y_w)
+            right_line.append(p.x_w)
+            right_line.append(p.y_w)
         self.d.append(draw.Lines(*right_line, fill="none", stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH))
 
     def draw_template_based_segment(self, segment, template_file_path: str):
+        assert self.d
         self.d.append(
             draw.Image(
                 segment.start_point_center.x_w - (segment.width / 2.0),
@@ -363,21 +400,22 @@ class Painter:
     def draw_track(self, track: Track):
         self.d = draw.Drawing(track.width, track.height, origin=track.origin, displayInline=False)
         self.d.setPixelScale(1000)
-        self.d.append(
-            draw.Rectangle(
-                0,
-                0,
-                track.width,
-                track.height,
-                fill=track.background.color.color,
-                fill_opacity=track.background.color.opacity,
-            )
-        )
 
-        if track.background.image:
-            img = track.background.image
+        if isinstance(track.background, BackgroundColor):
             self.d.append(
-                draw.Image(img.x, img.y, img.width, img.height, img.file, embed=True, preserveAspectRatio="none")
+                draw.Rectangle(
+                    0,
+                    0,
+                    track.width,
+                    track.height,
+                    fill=track.background.color,
+                    fill_opacity=track.background.opacity,
+                )
+            )
+        elif isinstance(track.background, BackgroundImage):
+            img = track.background
+            self.d.append(
+                draw.Image(img.x, img.y, img.width, img.height, img.filepath, embed=True, preserveAspectRatio="none")
             )
 
         for segment in track.segments:
@@ -387,11 +425,13 @@ class Painter:
         for segment in track.segments:
             self.draw_segment_verbose(segment)
 
-    def save_svg(self, track_name: str, output_directory: str, file_name_postfix: str = ""):
-        output_file_path = os.path.join(output_directory, track_name)
+    def save_svg(self, track_name: str, output_directory: Path, file_name_postfix: str = ""):
+        assert self.d
+        output_file_path = output_directory / track_name
         self.d.saveSvg(f"{output_file_path}{file_name_postfix}.svg")
 
-    def save_png(self, track_name: str, output_directory: str):
-        output_file_path = os.path.join(output_directory, track_name)
+    def save_png(self, track_name: str, output_directory: Path):
+        assert self.d
+        output_file_path = output_directory / track_name
         self.d.setPixelScale(1000)
         self.d.savePng(f"{output_file_path}.png")

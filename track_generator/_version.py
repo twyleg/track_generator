@@ -18,6 +18,8 @@ import sys
 from typing import Callable, Dict
 import functools
 
+# mypy: ignore-errors
+
 
 def get_keywords():
     """Get the keywords needed to look up the version information."""

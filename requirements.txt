@@ -11,3 +11,4 @@ drawsvg==1.9
 watchdog~=3.0.0
 pyside6~=6.5.1
 xmlschema~=2.3.1
+

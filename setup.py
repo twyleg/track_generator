@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     long_description=read("README.md"),
-    install_requires=["pytransform3d", "numpy", "drawsvg==1.9", "watchdog~=3.0.0", "pyside6~=6.5.1"],
+    install_requires=["pytransform3d", "numpy", "drawsvg==1.9", "watchdog~=3.0.0", "pyside6==6.4.0.1"],
     entry_points={
         "console_scripts": [
             "track_generator = track_generator.starter:start",

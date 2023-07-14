@@ -3,40 +3,6 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="unqualified">
 
-    <!--   <xs:complexType name="WebdavType">-->
-    <!--       <xs:sequence>-->
-    <!--           <xs:element name="Hostname" type="xs:string"/>-->
-    <!--           <xs:element name="RootDir" type="xs:string"/>-->
-    <!--           <xs:element name="User" type="xs:string"/>-->
-    <!--           <xs:element name="Pass" type="xs:string"/>-->
-    <!--       </xs:sequence>-->
-    <!--   </xs:complexType>-->
-
-    <!--  <xs:complexType name="PaulieboxType">-->
-    <!--      <xs:sequence>-->
-    <!--          <xs:element name="Logging" type="logging:LoggingType"/>-->
-    <!--          <xs:element name="Webdav" type="WebdavType"/>-->
-    <!--          <xs:element name="DownloadDir" type="xs:string"/>-->
-    <!--          <xs:element name="FrontendConfigPath" type="xs:string"/>-->
-    <!--      </xs:sequence>-->
-    <!--  </xs:complexType>-->
-
-    <!--  <xs:element name="Pauliebox" type="PaulieboxType"/>-->
-
-    <!--       <xs:simpleType name="LogLevelEnum">-->
-    <!--		   <xs:restriction base = "xs:string">-->
-    <!--			   <xs:enumeration value="Debug"/>-->
-    <!--			   <xs:enumeration value="Info"/>-->
-    <!--			   <xs:enumeration value="Warn"/>-->
-    <!--			   <xs:enumeration value="Error"/>-->
-    <!--		   </xs:restriction>-->
-    <!--	   </xs:simpleType>-->
-
-    <!--	   <xs:complexType name="ModuleType">-->
-    <!--		   <xs:attribute name="name" type="xs:string"/>-->
-    <!--		   <xs:attribute name="logLevel" type="logging:LogLevelEnum"/>-->
-    <!--	   </xs:complexType>-->
-
     <xs:simpleType name="TwoWayDirectionEnumType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="left"/>
@@ -52,58 +18,92 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ClothoidTypeEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="opend"/>
+            <xs:enumeration value="closing"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="SizeType">
-        <xs:attribute name="width" type="xs:float"/>
-        <xs:attribute name="height" type="xs:float"/>
+        <xs:attribute name="width" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="OriginType">
-        <xs:attribute name="x" type="xs:float"/>
-        <xs:attribute name="y" type="xs:float"/>
+        <xs:attribute name="x" type="xs:float" use="required"/>
+        <xs:attribute name="y" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="BackgroundType">
-        <xs:attribute name="color" type="xs:string"/>
-        <xs:attribute name="opacity" type="xs:float"/>
+        <xs:attribute name="color" type="xs:string" use="required"/>
+        <xs:attribute name="opacity" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="BackgroundImageType">
-        <xs:attribute name="file" type="xs:string"/>
-        <xs:attribute name="x" type="xs:float"/>
-        <xs:attribute name="y" type="xs:float"/>
-        <xs:attribute name="width" type="xs:float"/>
-        <xs:attribute name="height" type="xs:float"/>
+        <xs:attribute name="file" type="xs:string" use="required"/>
+        <xs:attribute name="x" type="xs:float" use="required"/>
+        <xs:attribute name="y" type="xs:float" use="required"/>
+        <xs:attribute name="width" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ObstacleType">
+        <xs:attribute name="w" type="xs:float" use="required"/>
+        <xs:attribute name="h" type="xs:float" use="required"/>
+        <xs:attribute name="d" type="xs:float" use="required"/>
+        <xs:attribute name="rot" type="xs:float" use="required"/>
+        <xs:attribute name="lon_offset" type="xs:float" use="required"/>
+        <xs:attribute name="lat_offset" type="xs:float" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="SegmentType">
+        <xs:sequence>
+            <xs:element name="Obstacle" type="ObstacleType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="StartSegmentType">
-        <xs:attribute name="x" type="xs:float"/>
-        <xs:attribute name="y" type="xs:float"/>
-        <xs:attribute name="direction_angle" type="xs:float"/>
+        <xs:attribute name="x" type="xs:float" use="required"/>
+        <xs:attribute name="y" type="xs:float" use="required"/>
+        <xs:attribute name="direction_angle" type="xs:float" use="required"/>
     </xs:complexType>
 
+<!--    <xs:complexType name="StraightSegmentType">-->
+<!--        <xs:attribute name="length" type="xs:float"/>-->
+<!--    </xs:complexType>-->
+
     <xs:complexType name="StraightSegmentType">
-        <xs:attribute name="length" type="xs:float"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="length" type="xs:float" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="CrosswalkSegmentType">
-        <xs:attribute name="length" type="xs:float"/>
+        <xs:attribute name="length" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="TurnSegmentType">
-        <xs:attribute name="direction" type="TwoWayDirectionEnumType"/>
-        <xs:attribute name="radius" type="xs:float"/>
-        <xs:attribute name="radian" type="xs:float"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="direction" type="TwoWayDirectionEnumType" use="required"/>
+                <xs:attribute name="radius" type="xs:float" use="required"/>
+                <xs:attribute name="radian" type="xs:float" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="IntersectionSegmentType">
-        <xs:attribute name="length" type="xs:float"/>
-        <xs:attribute name="direction" type="ThreeWayDirectionEnumType"/>
+        <xs:attribute name="length" type="xs:float" use="required"/>
+        <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="GapSegmentType">
-        <xs:attribute name="length" type="xs:float"/>
-        <xs:attribute name="direction" type="ThreeWayDirectionEnumType"/>
+        <xs:attribute name="length" type="xs:float" use="required"/>
+        <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
     </xs:complexType>
 
     <xs:simpleType name="ParkingLotSpotEnumType">
@@ -115,8 +115,8 @@
     </xs:simpleType>
 
     <xs:complexType name="ParkingAreaSegmentLotsParkingLotSpotType">
-        <xs:attribute name="type" type="ParkingLotSpotEnumType"/>
-        <xs:attribute name="length" type="xs:float"/>
+        <xs:attribute name="type" type="ParkingLotSpotEnumType" use="required"/>
+        <xs:attribute name="length" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="ParkingAreaSegmentLotsParkingLotType">
@@ -124,9 +124,9 @@
             <xs:element name="Spot" type="ParkingAreaSegmentLotsParkingLotSpotType" minOccurs="1"
                         maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="start" type="xs:float"/>
-        <xs:attribute name="depth" type="xs:float"/>
-        <xs:attribute name="opening_ending_angle" type="xs:float"/>
+        <xs:attribute name="start" type="xs:float" use="required"/>
+        <xs:attribute name="depth" type="xs:float" use="required"/>
+        <xs:attribute name="opening_ending_angle" type="xs:float" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="ParkingAreaSegmentLotsType">
@@ -145,10 +145,18 @@
     </xs:complexType>
 
     <xs:complexType name="TrafficIslandSegmentType">
-        <xs:attribute name="island_width" type="xs:float"/>
-        <xs:attribute name="crosswalk_length" type="xs:float"/>
-        <xs:attribute name="curve_segment_length" type="xs:float"/>
-        <xs:attribute name="curvature" type="xs:float"/>
+        <xs:attribute name="island_width" type="xs:float" use="required"/>
+        <xs:attribute name="crosswalk_length" type="xs:float" use="required"/>
+        <xs:attribute name="curve_segment_length" type="xs:float" use="required"/>
+        <xs:attribute name="curvature" type="xs:float" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ClothoidSegmentType">
+        <xs:attribute name="a" type="xs:float" use="required"/>
+        <xs:attribute name="angle" type="xs:float" use="required"/>
+        <xs:attribute name="angle_offset" type="xs:float" use="required"/>
+        <xs:attribute name="direction" type="TwoWayDirectionEnumType" use="required"/>
+        <xs:attribute name="type" type="ClothoidTypeEnumType" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="SegmentsType">
@@ -162,6 +170,7 @@
                 <xs:element name="Gap" type="GapSegmentType"/>
                 <xs:element name="ParkingArea" type="ParkingAreaSegmentType"/>
                 <xs:element name="TrafficIsland" type="TrafficIslandSegmentType"/>
+                <xs:element name="Clothoid" type="ClothoidSegmentType"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -176,7 +185,7 @@
             </xs:choice>
             <xs:element name="Segments" type="SegmentsType"/>
         </xs:sequence>
-        <xs:attribute name="version" type="xs:string"/>
+        <xs:attribute name="version" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:element name="TrackDefinition" type="TrackDefinitionType"/>

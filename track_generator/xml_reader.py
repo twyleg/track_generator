@@ -69,7 +69,7 @@ def _read_background(root: ET.Element, xml_filepath: Path) -> Union[BackgroundCo
 
         return BackgroundImage(file, x, y, width, height)
 
-    raise RuntimeError("Here be dragons")
+    raise RuntimeError("Here be dragons - XSD prevents us from getting here!")
 
 
 def _read_segments(root: ET.Element):
@@ -127,13 +127,13 @@ def _read_crosswalk_element(crosswalk_element: ET.Element):
 
 def _read_intersection_element(intersection_element: ET.Element):
     length = intersection_element.attrib["length"]
-    direction = IntersectionDirection(str(intersection_element.attrib["direction"]))
+    direction = IntersectionDirection(intersection_element.attrib["direction"])
     return Intersection(float(length), direction)
 
 
 def _read_gap_element(straight_element: ET.Element):
     length = straight_element.attrib["length"]
-    direction = IntersectionDirection(str(straight_element.attrib["direction"]))
+    direction = IntersectionDirection(straight_element.attrib["direction"])
     return Gap(float(length), direction)
 
 
@@ -188,7 +188,7 @@ def _read_clothoid_element(clothoid_element: ET.Element) -> Clothoid:
     a = clothoid_element.attrib["a"]
     angle = clothoid_element.attrib["angle"]
     angle_offset = clothoid_element.attrib["angle_offset"]
-    direction = ClothoidDirection.RIGHT if clothoid_element.attrib["direction"] == "right" else ClothoidDirection.LEFT
+    direction = ClothoidDirection(clothoid_element.attrib["direction"])
     type = ClothoidType(str(clothoid_element.attrib["type"]))
 
     return Clothoid(float(a), float(angle), float(angle_offset), direction, ClothoidType(type))

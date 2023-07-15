@@ -300,19 +300,6 @@ class Painter:
 
     def draw_clothoid(self, segment: Clothoid):
         assert self.d
-        # background: tuple(float) = ()
-        # for p in segment.background_polygon:
-        #     background += (p.x_w, p.y_w)
-        # self.d.append(
-        #     draw.Lines(
-        #         background[0],
-        #         background[1],
-        #         *background,
-        #         fill=DEFAULT_TRACK_COLOR,
-        #         stroke=DEFAULT_TRACK_COLOR,
-        #         stroke_width=2 * DEFAULT_LINE_WIDTH,
-        #     )
-        # )
         background: List[float] = []
         for p in segment.background_polygon:
             background.append(p.x_w)

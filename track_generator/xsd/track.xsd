@@ -70,10 +70,6 @@
         <xs:attribute name="direction_angle" type="xs:float" use="required"/>
     </xs:complexType>
 
-<!--    <xs:complexType name="StraightSegmentType">-->
-<!--        <xs:attribute name="length" type="xs:float"/>-->
-<!--    </xs:complexType>-->
-
     <xs:complexType name="StraightSegmentType">
         <xs:complexContent>
             <xs:extension base="SegmentType">
@@ -97,13 +93,21 @@
     </xs:complexType>
 
     <xs:complexType name="IntersectionSegmentType">
-        <xs:attribute name="length" type="xs:float" use="required"/>
-        <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="length" type="xs:float" use="required"/>
+                <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="GapSegmentType">
-        <xs:attribute name="length" type="xs:float" use="required"/>
-        <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="length" type="xs:float" use="required"/>
+                <xs:attribute name="direction" type="ThreeWayDirectionEnumType" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:simpleType name="ParkingLotSpotEnumType">
@@ -137,26 +141,38 @@
     </xs:complexType>
 
     <xs:complexType name="ParkingAreaSegmentType">
-        <xs:sequence>
-            <xs:element name="RightLots" type="ParkingAreaSegmentLotsType"/>
-            <xs:element name="LeftLots" type="ParkingAreaSegmentLotsType"/>
-        </xs:sequence>
-        <xs:attribute name="length" type="xs:float"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:sequence>
+                    <xs:element name="RightLots" type="ParkingAreaSegmentLotsType"/>
+                    <xs:element name="LeftLots" type="ParkingAreaSegmentLotsType"/>
+                </xs:sequence>
+                <xs:attribute name="length" type="xs:float"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="TrafficIslandSegmentType">
-        <xs:attribute name="island_width" type="xs:float" use="required"/>
-        <xs:attribute name="crosswalk_length" type="xs:float" use="required"/>
-        <xs:attribute name="curve_segment_length" type="xs:float" use="required"/>
-        <xs:attribute name="curvature" type="xs:float" use="required"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="island_width" type="xs:float" use="required"/>
+                <xs:attribute name="crosswalk_length" type="xs:float" use="required"/>
+                <xs:attribute name="curve_segment_length" type="xs:float" use="required"/>
+                <xs:attribute name="curvature" type="xs:float" use="required"/>
+           </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="ClothoidSegmentType">
-        <xs:attribute name="a" type="xs:float" use="required"/>
-        <xs:attribute name="angle" type="xs:float" use="required"/>
-        <xs:attribute name="angle_offset" type="xs:float" use="required"/>
-        <xs:attribute name="direction" type="TwoWayDirectionEnumType" use="required"/>
-        <xs:attribute name="type" type="ClothoidTypeEnumType" use="required"/>
+        <xs:complexContent>
+            <xs:extension base="SegmentType">
+                <xs:attribute name="a" type="xs:float" use="required"/>
+                <xs:attribute name="angle" type="xs:float" use="required"/>
+                <xs:attribute name="angle_offset" type="xs:float" use="required"/>
+                <xs:attribute name="direction" type="TwoWayDirectionEnumType" use="required"/>
+                <xs:attribute name="type" type="ClothoidTypeEnumType" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="SegmentsType">

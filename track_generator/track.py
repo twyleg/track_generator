@@ -27,8 +27,11 @@ class IntersectionDirection(Enum):
 
 
 class ClothoidDirection(Enum):
-    LEFT = -1
-    RIGHT = 1
+    LEFT = "left"
+    RIGHT = "right"
+
+    def __int__(self) -> int:
+        return -1 if self == self.LEFT else 1
 
 
 class ClothoidType(Enum):
@@ -612,7 +615,7 @@ class Clothoid(Segment):
         return [x, y * direction, length]
 
     def get_inverted_points(self, points: List[List[float]]) -> List[List[float]]:
-        angle = radians(self.angle) * self.direction.value
+        angle = radians(self.angle) * int(self.direction)
         new_points = []
         start = points[0]
         end = self.move_point(points[-1], [-start[0], -start[1]])
@@ -624,7 +627,7 @@ class Clothoid(Segment):
         return new_points[::-1]
 
     def get_clothoid(self) -> List[List[float]]:
-        direction = self.direction.value * -1
+        direction = int(self.direction) * -1
         arc_length_start = self.a * sqrt(2 * radians(self.angle_offset))
         arc_length_end = self.a * sqrt(2 * radians(self.angle_offset + self.angle))
         points = []
@@ -644,7 +647,7 @@ class Clothoid(Segment):
     def get_moved_clothoid(self, points: List[List[float]], offset: float) -> List[List[float]]:
         new_points = []
         for point in points:
-            angle = (point[2] ** 2 / (2 * self.a**2) - radians(self.angle_offset)) * self.direction.value
+            angle = (point[2] ** 2 / (2 * self.a**2) - radians(self.angle_offset)) * int(self.direction)
             new_points.append([point[0] + offset * sin(angle), point[1] + offset * cos(angle), point[2]])
         return new_points
 
@@ -653,7 +656,7 @@ class Clothoid(Segment):
         assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         assert isinstance(self.direction_angle, float)
 
-        direction = self.direction.value * -1
+        direction = int(self.direction) * -1
         self.direction_angle += self.angle * direction
 
         middle_points = self.get_clothoid()

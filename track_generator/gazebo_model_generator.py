@@ -1,10 +1,8 @@
 # Copyright (C) 2022 twyleg
 import os
 from pathlib import Path
-
 from track_generator.track import Track
 from string import Template
-from typing import Optional
 
 
 def read(fname):

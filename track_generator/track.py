@@ -1,8 +1,10 @@
 # Copyright (C) 2022 twyleg
+from pathlib import Path
+
 import numpy
 from enum import Enum
 from math import tan, factorial, sqrt, sin, cos, radians, pi
-from typing import Any, List, Tuple, Optional
+from typing import Any, List, Tuple, Optional, Union
 from track_generator.coordinate_system import Polygon, Point2d, CartesianSystem2d
 
 LINE_WIDTH = 0.020
@@ -25,8 +27,11 @@ class IntersectionDirection(Enum):
 
 
 class ClothoidDirection(Enum):
-    LEFT = -1
-    RIGHT = 1
+    LEFT = "left"
+    RIGHT = "right"
+
+    def __int__(self) -> int:
+        return -1 if self == self.LEFT else 1
 
 
 class ClothoidType(Enum):
@@ -50,23 +55,19 @@ def calc_crosswalk_lines(length: float, width: float, coordinate_system: Cartesi
     return polygons
 
 
-class Background:
-    class Color:
-        def __init__(self, color: str, opacity: float):
-            self.color = color
-            self.opacity = opacity
+class BackgroundColor:
+    def __init__(self, color: str, opacity: float):
+        self.color = color
+        self.opacity = opacity
 
-    class Image:
-        def __init__(self, file: str, x: float, y: float, width: float, height: float):
-            self.file = file
-            self.x = x
-            self.y = y
-            self.width = width
-            self.height = height
 
-    def __init__(self, color: Color = None, image: Image = None):
-        self.color: Optional[Background.Color] = color
-        self.image: Optional[Background.Image] = image
+class BackgroundImage:
+    def __init__(self, filepath: Path, x: float, y: float, width: float, height: float):
+        self.filepath = filepath
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
 
 
 class Track:
@@ -76,7 +77,7 @@ class Track:
         width: float,
         height: float,
         origin: Tuple[float, float],
-        background: Background,
+        background: Union[BackgroundColor, BackgroundImage],
         segments: List[Any],
     ):
         self.version = version
@@ -96,7 +97,7 @@ class Track:
 
 
 class Segment:
-    def __init__(self):
+    def __init__(self) -> None:
         self.direction_angle: Optional[float] = None
         self.start_coordinate_system: Optional[CartesianSystem2d] = None
         self.end_coordinate_system: Optional[CartesianSystem2d] = None
@@ -114,7 +115,7 @@ class Start:
         self.end_coordinate_system = self.start_coordinate_system
 
     def __str__(self) -> str:
-        return f"Start: end_point={self.end_point}, direction_angle={self.direction_angle}"
+        return f"Start: direction_angle={self.direction_angle}"
 
     def calc(self) -> None:
         pass
@@ -131,12 +132,13 @@ class Straight(Segment):
 
     def __str__(self) -> str:
         return (
-            f"Straight: sp={self.center_line_polygon[0][0]}, ep={self.center_line_polygon[0][1]},"
+            f"Straight: sp={self.center_line_polygon[0]}, ep={self.center_line_polygon[0]},"
             f" length={self.length}, direction_angle={self.direction_angle}"
         )
 
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.end_coordinate_system = CartesianSystem2d(self.length, 0.0, 0.0, self.start_coordinate_system)
 
         self.center_line_polygon = [
@@ -161,8 +163,8 @@ class Arc(Segment):
         self.radius = radius
         self.radian_angle = radian_angle
         self.direction_clockwise = direction_clockwise
-        self.start_direction_angle: Optional[float] = None
 
+        self.start_direction_angle: Optional[float] = None
         self.start_point_center: Optional[Point2d] = None
         self.start_point_left: Optional[Point2d] = None
         self.start_point_right: Optional[Point2d] = None
@@ -182,11 +184,13 @@ class Arc(Segment):
         signed_radian_angle = -self.radian_angle if self.direction_clockwise else self.radian_angle
         center_offset = self.radius if self.direction_clockwise else -self.radius
 
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         center_coordinate_system = CartesianSystem2d(
             0.0, -center_offset, signed_radian_angle, self.start_coordinate_system
         )
         self.end_coordinate_system = CartesianSystem2d(0.0, center_offset, 0.0, center_coordinate_system)
 
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.start_point_center = Point2d(0.0, 0.0, self.start_coordinate_system)
         self.start_point_left = Point2d(0.0, -LINE_OFFSET, self.start_coordinate_system)
         self.start_point_right = Point2d(0.0, +LINE_OFFSET, self.start_coordinate_system)
@@ -205,6 +209,7 @@ class Crosswalk(Straight):
 
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.line_polygons = calc_crosswalk_lines(self.length, TRACK_WIDTH, self.start_coordinate_system)
 
 
@@ -219,6 +224,7 @@ class Intersection(Segment):
         self.center_line_polygons: List[Polygon] = []
 
     def calc_base_lines(self) -> None:
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.base_line_polygons.append(
             [
                 Point2d(0.0, 0.0, self.start_coordinate_system),
@@ -234,7 +240,7 @@ class Intersection(Segment):
 
     def calc_corner_lines(self) -> None:
         center_x = self.length / 2.0
-
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.corner_line_polygons.append(
             [
                 Point2d(0, -LINE_OFFSET, self.start_coordinate_system),
@@ -269,7 +275,7 @@ class Intersection(Segment):
 
     def calc_stop_lines(self) -> None:
         center_x = self.length / 2.0
-
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.stop_line_polygons.append(
             [
                 Point2d(center_x - LINE_OFFSET, 0, self.start_coordinate_system),
@@ -286,7 +292,7 @@ class Intersection(Segment):
 
     def calc_center_lines(self) -> None:
         center_x = self.length / 2.0
-
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.center_line_polygons.append(
             [
                 Point2d(0, 0, self.start_coordinate_system),
@@ -323,6 +329,8 @@ class Intersection(Segment):
             new_end = [self.length, 0, 0]
         else:
             new_end = [self.length / 2, self.length / 2, 90]
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
+        assert isinstance(self.direction_angle, float)
         self.end_coordinate_system = CartesianSystem2d(new_end[0], new_end[1], new_end[2], self.start_coordinate_system)
         self.direction_angle += new_end[2]
 
@@ -345,6 +353,8 @@ class Gap(Straight):
             new_end = [self.length, 0, 0]
         else:
             new_end = [self.length / 2, self.length / 2, 90]
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
+        assert isinstance(self.direction_angle, float)
         self.end_coordinate_system = CartesianSystem2d(new_end[0], new_end[1], new_end[2], self.start_coordinate_system)
         self.direction_angle += new_end[2]
 
@@ -467,7 +477,7 @@ class TrafficIsland(Segment):
 
     def calc_lane(self, side: Side):
         side_factor = 1 if side == Side.LEFT else -1
-
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.line_polygons.append(
             [
                 Point2d(0.0, 0.0, self.start_coordinate_system),
@@ -503,6 +513,7 @@ class TrafficIsland(Segment):
         )
 
     def calc_background(self):
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         self.background_polygon = [
             Point2d(0.0, TRACK_WIDTH / 2, self.start_coordinate_system),
             Point2d(self.curve_segment_length, TRACK_WIDTH / 2 + self.island_width / 2, self.start_coordinate_system),
@@ -529,6 +540,7 @@ class TrafficIsland(Segment):
         ]
 
     def calc_crosswalk_lines(self):
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         width = TRACK_WIDTH / 2 - LINE_WIDTH
         self.crosswalk_lines_polygons = calc_crosswalk_lines(
             self.crosswalk_length,
@@ -548,6 +560,7 @@ class TrafficIsland(Segment):
 
     def calc(self, prev_segment):
         super().calc(prev_segment)
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
         overall_length = 2 * self.curve_segment_length + self.crosswalk_length
         self.end_coordinate_system = CartesianSystem2d(overall_length, 0.0, 0.0, self.start_coordinate_system)
 
@@ -566,7 +579,7 @@ class Clothoid(Segment):
         self.direction = direction
         self.type = type
         self.lines: List[Polygon] = []
-        self.background_polygon: List[Polygon] = []
+        self.background_polygon: Polygon = []
 
     def get_int(self, number: float) -> int:
         return int(number + 0.5 if number >= 0 else number - 0.5)
@@ -581,7 +594,7 @@ class Clothoid(Segment):
             point[2],
         ]
 
-    def get_clothoid_point(self, length: float, direction: float) -> List[List[float]]:
+    def get_clothoid_point(self, length: float, direction: float) -> List[float]:
         toggle = 1
         x = 0
         y = 0
@@ -602,7 +615,7 @@ class Clothoid(Segment):
         return [x, y * direction, length]
 
     def get_inverted_points(self, points: List[List[float]]) -> List[List[float]]:
-        angle = radians(self.angle) * self.direction.value
+        angle = radians(self.angle) * int(self.direction)
         new_points = []
         start = points[0]
         end = self.move_point(points[-1], [-start[0], -start[1]])
@@ -614,7 +627,7 @@ class Clothoid(Segment):
         return new_points[::-1]
 
     def get_clothoid(self) -> List[List[float]]:
-        direction = self.direction.value * -1
+        direction = int(self.direction) * -1
         arc_length_start = self.a * sqrt(2 * radians(self.angle_offset))
         arc_length_end = self.a * sqrt(2 * radians(self.angle_offset + self.angle))
         points = []
@@ -634,13 +647,16 @@ class Clothoid(Segment):
     def get_moved_clothoid(self, points: List[List[float]], offset: float) -> List[List[float]]:
         new_points = []
         for point in points:
-            angle = (point[2] ** 2 / (2 * self.a**2) - radians(self.angle_offset)) * self.direction.value
+            angle = (point[2] ** 2 / (2 * self.a**2) - radians(self.angle_offset)) * int(self.direction)
             new_points.append([point[0] + offset * sin(angle), point[1] + offset * cos(angle), point[2]])
         return new_points
 
     def calc(self, prev_segment: Segment) -> None:
         super().calc(prev_segment)
-        direction = self.direction.value * -1
+        assert isinstance(self.start_coordinate_system, CartesianSystem2d)
+        assert isinstance(self.direction_angle, float)
+
+        direction = int(self.direction) * -1
         self.direction_angle += self.angle * direction
 
         middle_points = self.get_clothoid()

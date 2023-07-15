@@ -1,17 +1,22 @@
 # Copyright (C) 2022 twyleg
-import os
+import glob
 from pathlib import Path
+from typing import List
+
 from track_generator.generator import generate_track
 
 
 FILE_DIR = Path(__file__).parent
 
 
-if __name__ == "__main__":
-    simple_track_example_input_file = FILE_DIR / "../track_files/simple_track_example.xml"
-    advanced_track_example_input_file = FILE_DIR / "../track_files/advanced_track_example.xml"
-    output_directory = FILE_DIR / "output"
+def get_track_file_examples() -> List[Path]:
+    glob_files = glob.glob(str(FILE_DIR / "../track_files/*.xml"))
+    return [Path(filepath) for filepath in glob_files]
 
-    track_files = [simple_track_example_input_file, advanced_track_example_input_file]
+
+if __name__ == "__main__":
+    output_directory = FILE_DIR / "output"
+    track_files = get_track_file_examples()
     track_output_directories = generate_track(track_files, output_directory, False, False)
-    print(track_output_directories)
+    for track_output_directory in track_output_directories:
+        print(track_output_directory)

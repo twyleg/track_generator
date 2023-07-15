@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import sys
 import os
 from pathlib import Path
@@ -8,6 +9,9 @@ from PySide6.QtCore import QObject, Signal, Property
 
 class TrackLiveView:
     class Model(QObject):
+        reloadImage = Signal()
+        filename_changed = Signal()
+
         def __init__(self, filename: str) -> None:
             QObject.__init__(self)
             self._filename = filename
@@ -19,15 +23,7 @@ class TrackLiveView:
             self._filename = filename
             self.filename_changed.emit()
 
-        @Signal
-        def filename_changed(self) -> None:
-            pass
-
-        @Signal
-        def reloadImage(self) -> None:
-            pass
-
-        filename = Property(str, get_filename, set_filename, notify=filename_changed)
+        filename = Property(str, get_filename, set_filename, notify=filename_changed)  # type: ignore [arg-type]
 
     def __init__(self, output_file_path: str):
         self.app = QGuiApplication(sys.argv)

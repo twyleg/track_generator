@@ -14,7 +14,7 @@ from watchdog.events import FileSystemEventHandler
 
 
 def _create_output_directory_if_required(output_dirpath: Path):
-    output_dirpath.mkdir(exist_ok=True)
+    output_dirpath.mkdir(parents=True, exist_ok=True)
 
 
 def _get_track_name_from_file_path(track_filepath: Path) -> str:
@@ -29,7 +29,7 @@ def generate_track(
     generate_png=False,
     generate_gazebo_project=False,
     generate_ground_truth=False,
-) -> List[str]:
+) -> List[Path]:
     """
     Generate tracks (SVG, Gazebo project, etc) from given track files (XML)
     :param track_filepaths: List of track files
@@ -74,9 +74,6 @@ class FileChangedHandler(FileSystemEventHandler):
     def __init__(self, input_filepath: Path, callback: Callable):
         self.input_filepath = input_filepath
         self.callback = callback
-
-    # def on_any_event(self, event) -> None:
-    #     pass
 
     def on_closed(self, event) -> None:
         event_filepath = Path(event.src_path)

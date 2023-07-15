@@ -1,7 +1,6 @@
 <TrackDefinition version="0.0.1">
     <Size width="5.6" height="9.0"/>
     <Origin x="0" y="0"/>
-    <Background color="#545454" opacity="1.0"/>
     <BackgroundImage file="background_image.png" x="0.0" y="0.0" width="5.6" height="9.0"/>
     <Segments>
         <Start x="5.10" y="1.70" direction_angle="90.0"/>

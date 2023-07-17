@@ -8,7 +8,7 @@ from track_generator.track import (
     Track,
     Start,
     Straight,
-    Arc,
+    Turn,
     Crosswalk,
     Intersection,
     Gap,
@@ -36,8 +36,8 @@ class GroundTruthGenerator:
             pass
         elif isinstance(segment, (Straight, ParkingArea, Gap, Crosswalk)):
             self.generate_straight(segment)
-        elif isinstance(segment, Arc):
-            self.generate_arc(segment)
+        elif isinstance(segment, Turn):
+            self.generate_turn(segment)
         elif isinstance(segment, Intersection):
             self.generate_intersection(segment)
         elif isinstance(segment, TrafficIsland):
@@ -54,7 +54,7 @@ class GroundTruthGenerator:
                 [segment.right_line_polygon[i].x_w, segment.right_line_polygon[i].y_w],
             )
 
-    def generate_arc(self, segment: Arc):
+    def generate_turn(self, segment: Turn):
         assert segment.start_point_left
         assert segment.start_point_right
         self.write_points(

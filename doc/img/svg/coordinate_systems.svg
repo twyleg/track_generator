@@ -845,7 +845,7 @@
      inkscape:cx="514"
      inkscape:cy="284.5"
      inkscape:document-units="mm"
-     inkscape:current-layer="g12866"
+     inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:snap-bbox="true"
@@ -1549,18 +1549,18 @@
          xml:space="preserve"
          transform="matrix(0.26458333,0,0,0.26458333,14.987064,142.29667)"
          id="text6461"
-         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect6463);fill:#000000;fill-opacity:1;stroke:none"><tspan
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect6463);display:inline;fill:#000000;fill-opacity:1;stroke:none"><tspan
            x="59.542969"
            y="564.73378"
-           id="tspan8886">world</tspan></text>
+           id="tspan10262">world</tspan></text>
       <text
          xml:space="preserve"
          transform="matrix(0.26458333,0,0,0.26458333,29.629678,143.32975)"
          id="text8227"
-         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect8229);fill:#000000;fill-opacity:1;stroke:none"><tspan
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect8229);display:inline;fill:#000000;fill-opacity:1;stroke:none"><tspan
            x="5.6289062"
            y="63.042378"
-           id="tspan8888">svg</tspan></text>
+           id="tspan10264">svg</tspan></text>
     </g>
     <path
        style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Arrow1Lstart);marker-end:url(#marker14154);paint-order:markers fill stroke"
@@ -1937,18 +1937,5 @@
          y="152.77412"
          style="font-size:2.11667px;text-align:center;text-anchor:middle;fill:#808080;fill-opacity:1;stroke-width:0.264583"
          id="tspan25153-9-2">angle</tspan></text>
-    <path
-       style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linejoin:round;paint-order:markers fill stroke"
-       id="path1693"
-       sodipodi:type="arc"
-       sodipodi:cx="56.434387"
-       sodipodi:cy="176.9644"
-       sodipodi:rx="10.485575"
-       sodipodi:ry="10.485575"
-       sodipodi:start="3.1415927"
-       sodipodi:end="4.712389"
-       sodipodi:open="true"
-       sodipodi:arc-type="arc"
-       d="M 45.948812,176.9644 A 10.485575,10.485575 0 0 1 56.434387,166.47883" />
   </g>
 </svg>

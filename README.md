@@ -73,4 +73,6 @@ TODO
 Documentation
 =============
 
-TODO
+Check the readthedocs site for more details:
+
+https://track-generator.readthedocs.io/en/latest/

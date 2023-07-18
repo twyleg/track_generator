@@ -1,8 +1,8 @@
-name: Static Code Checks
+name: Code Checks
 run-name: code_checks
 on: [push]
 jobs:
-  run-static_code_checks:
+  run-code_checks:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -11,5 +11,5 @@ jobs:
           python-version: '3.10'
       - name: 'Install requirements'
         run: pip install -r requirements.txt
-      - name: 'Run typechecks'
+      - name: 'Run tox'
         run: tox

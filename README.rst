@@ -4,19 +4,72 @@ Track Generator
 Simple generator to create tracks (ground textures for vehicle simulations)
 from a parametric description (XML).
 
-For example, the following parametric description of a track in XML will lead
-to the corresponding result:
-
-**Track definition file (XML):**
-
-.. literalinclude:: examples/track_files/reference_track_example.xml
-   :language: XML
-   :encoding: UTF-8
-   :linenos:
+For example, the following track was generated based on the parametric description
+that follows:
 
 **Output (SVG, optional PNG):**
 
-![track output example](doc/source/_static/img/svg/reference_track_example.svg)
+.. image:: doc/source/_static/img/svg/reference_track_example.svg
+
+**Track definition file (XML):**
+
+.. code-block:: XML
+    <TrackDefinition version="0.0.1">
+        <Size width="10.0" height="10.0"/>
+        <Origin x="0" y="0"/>
+        <Background color="#545454" opacity="1.0"/>
+        <Segments>
+            <Start x="0.500" y="5.000" direction_angle="90.0"/>
+            <Straight length="1.000"/>
+            <Crosswalk length="0.800"/>
+            <Turn direction="right" radius="1.0" radian="90.0"/>
+            <Straight length="0.500"/>
+            <Intersection length="1.600" direction="straight"/>
+            <Turn direction="left" radius="0.800" radian="270.0"/>
+            <Gap length="1.600" direction="straight"/>
+            <ParkingArea length="4.0">
+                <Obstacle w="0.3" h="0.3" d="0.3" rot="45.0" lon_offset="0.5" lat_offset="0.0"/>
+                <RightLots>
+                    <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">
+                        <Spot type="free" length="0.3"/>
+                        <Spot type="blocked" length="0.7"/>
+                        <Spot type="occupied" length="0.7"/>
+                    </ParkingLot>
+                    <ParkingLot start="2.3" depth="0.3" opening_ending_angle="45">
+                        <Spot type="free" length="0.3"/>
+                        <Spot type="blocked" length="0.4"/>
+                        <Spot type="free" length="0.3"/>
+                    </ParkingLot>
+                </RightLots>
+                <LeftLots>
+                    <ParkingLot start="1.0" depth="0.3" opening_ending_angle="45">
+                        <Spot type="blocked" length="0.3"/>
+                        <Spot type="free" length="0.7"/>
+                    </ParkingLot>
+                </LeftLots>
+            </ParkingArea>
+            <Turn direction="left" radius="1.0" radian="90.0"/>
+            <TrafficIsland island_width="0.5" crosswalk_length="1.0" curve_segment_length="1.0" curvature="1.0"/>
+            <Turn direction="left" radius="1.0" radian="90.0"/>
+            <Straight length="2.500"/>
+            <Turn direction="left" radius="1.0" radian="90.0"/>
+            <Turn direction="right" radius="1.0" radian="180.0"/>
+            <Straight length="1.00"/>
+            <Turn direction="right" radius="1.0" radian="90.0"/>
+            <Straight length="6.0"/>
+            <Turn direction="right" radius="1.0" radian="90.0"/>
+            <Straight length="6.3"/>
+            <Turn direction="right" radius="1.0" radian="90.0">
+                <Obstacle w="0.3" h="0.3" d="0.3" rot="0.0" lon_offset="0.5" lat_offset="0.2"/>
+            </Turn>
+            <Straight length="3.5">
+                <Obstacle w="0.3" h="0.3" d="0.3" rot="45.0" lon_offset="0.5" lat_offset="0.0"/>
+                <Obstacle w="0.3" h="0.3" d="0.3" rot="10.0" lon_offset="1.0" lat_offset="-0.5"/>
+                <Obstacle w="0.3" h="0.3" d="0.3" rot="30.0" lon_offset="1.5" lat_offset="0.3"/>
+            </Straight>
+        </Segments>
+    </TrackDefinition>
+
 
 Installation
 ============

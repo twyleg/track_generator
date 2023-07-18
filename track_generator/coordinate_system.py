@@ -2,7 +2,7 @@
 import numpy as np
 import pytransform3d.rotations as pyrot
 import pytransform3d.transformations as pytr
-from typing import Optional, List, Union
+from typing import List, Union
 
 
 class WorldCoordinateSystem:
@@ -44,7 +44,3 @@ class Point2d:
 
 
 Polygon = List[Point2d]
-
-# class Polygon(List[Point2d]):
-#     def __init__(self, *args):
-#         super().__init__(self, *args)

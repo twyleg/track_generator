@@ -157,7 +157,7 @@ class Straight(Segment):
         ]
 
 
-class Arc(Segment):
+class Turn(Segment):
     def __init__(self, radius: float, radian_angle: float, direction_clockwise: bool):
         super().__init__()
         self.radius = radius
@@ -173,7 +173,7 @@ class Arc(Segment):
 
     def __str__(self) -> str:
         return (
-            f"Arc: sp={self.start_point_center}, ep={self.end_point_center}, cp={self.center_point},"
+            f"Turn: sp={self.start_point_center}, ep={self.end_point_center}, cp={self.center_point},"
             f" start_direction_angle={self.start_direction_angle}, direction_angle={self.direction_angle},"
             f" cw={self.direction_clockwise}, angle={self.radian_angle}, radius={self.radius}"
         )

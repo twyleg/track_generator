@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="160.06673mm"
    height="171.76004mm"
    viewBox="0 0 160.06673 171.76004"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.2 (e86c870, 2021-01-15)"
-   sodipodi:docname="coordinate_systems.svg">
+   inkscape:version="1.2.2 (b0a8486, 2022-12-01)"
+   sodipodi:docname="coordinate_systems.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
+    <rect
+       x="5.6282959"
+       y="48.483521"
+       width="39.57605"
+       height="19.091797"
+       id="rect8229" />
+    <rect
+       x="59.543708"
+       y="550.17482"
+       width="69.652511"
+       height="27.005507"
+       id="rect6463" />
     <marker
        style="overflow:visible"
        id="Arrow2Lstart"
@@ -829,19 +841,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="217.40938"
-     inkscape:cy="286.76405"
+     inkscape:zoom="1"
+     inkscape:cx="514"
+     inkscape:cy="284.5"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      inkscape:snap-bbox="true"
      inkscape:snap-bbox-midpoints="true"
-     inkscape:window-width="1916"
-     inkscape:window-height="1035"
-     inkscape:window-x="2988"
-     inkscape:window-y="18"
+     inkscape:window-width="2556"
+     inkscape:window-height="1395"
+     inkscape:window-x="2560"
+     inkscape:window-y="1098"
      inkscape:window-maximized="1"
      inkscape:snap-bbox-edge-midpoints="true"
      showguides="false"
@@ -849,31 +861,40 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <sodipodi:guide
        position="58.817214,89.027281"
        orientation="1,0"
-       id="guide4545" />
+       id="guide4545"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="58.817212,89.023681"
        orientation="0,-1"
-       id="guide4559" />
+       id="guide4559"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="91.159036,130.54935"
        orientation="-0.70706629,-0.70714727"
-       id="guide9737" />
+       id="guide9737"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="104.82266,152.7707"
        orientation="1,0"
-       id="guide9771" />
+       id="guide9771"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="107.16583,71.447411"
        orientation="1,0"
-       id="guide19661" />
+       id="guide19661"
+       inkscape:locked="false" />
     <sodipodi:guide
        position="89.905097,78.563411"
        orientation="-0.70710678,0.70710678"
-       id="guide19663" />
+       id="guide19663"
+       inkscape:locked="false" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -883,7 +904,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1455,7 +1476,7 @@
        sodipodi:open="true" />
     <g
        id="g12866"
-       transform="translate(-40.444852,18.504973)">
+       transform="translate(-40.444852,-122.50247)">
       <g
          id="g12799">
         <g
@@ -1498,7 +1519,7 @@
         </g>
       </g>
       <path
-         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+         style="fill:none;fill-opacity:1;stroke:#808080;stroke-width:0.529167;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
          id="path1289-5"
          sodipodi:type="arc"
          sodipodi:cx="43.858639"
@@ -1511,7 +1532,7 @@
          d="m 53.920033,-161.30892 a 14.228961,14.228961 0 0 1 4.167567,10.06139 H 43.858639 Z"
          transform="scale(1,-1)" />
       <path
-         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker12154-9);paint-order:markers fill stroke"
+         style="fill:none;fill-opacity:1;stroke:#808080;stroke-width:0.529167;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker12154-9);paint-order:markers fill stroke"
          id="path1289-6-2"
          sodipodi:type="arc"
          sodipodi:cx="43.858639"
@@ -1524,6 +1545,22 @@
          sodipodi:open="true"
          d="m 54.601598,-160.5777 a 14.228961,14.228961 0 0 1 3.486002,9.33017"
          transform="scale(1,-1)" />
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,14.987064,142.29667)"
+         id="text6461"
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect6463);display:inline;fill:#000000;fill-opacity:1;stroke:none"><tspan
+           x="59.542969"
+           y="564.73378"
+           id="tspan10262">world</tspan></text>
+      <text
+         xml:space="preserve"
+         transform="matrix(0.26458333,0,0,0.26458333,29.629678,143.32975)"
+         id="text8227"
+         style="font-style:normal;font-weight:normal;font-size:16px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect8229);display:inline;fill:#000000;fill-opacity:1;stroke:none"><tspan
+           x="5.6289062"
+           y="63.042378"
+           id="tspan10264">svg</tspan></text>
     </g>
     <path
        style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:0.264999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-start:url(#Arrow1Lstart);marker-end:url(#marker14154);paint-order:markers fill stroke"

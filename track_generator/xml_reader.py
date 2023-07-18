@@ -117,7 +117,7 @@ def _read_turn_element(turn_element: ET.Element):
     radius = turn_element.attrib["radius"]
     radian = turn_element.attrib["radian"]
     cw = True if direction == "right" else False
-    return Arc(float(radius), float(radian), cw)
+    return Turn(float(radius), float(radian), cw)
 
 
 def _read_crosswalk_element(crosswalk_element: ET.Element):

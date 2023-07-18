@@ -6,6 +6,11 @@ types-setuptools~=68.0.0.0
 twine~=4.0.2
 wheel~=0.40.0
 
+sphinx
+sphinx-rtd-theme
+sphinx-copybutton
+sphinx-autobuild
+
 pytransform3d~=3.2.0
 drawsvg~=2.2.0
 watchdog~=3.0.0

@@ -9,11 +9,11 @@ that follows:
 
 **Output (SVG, optional PNG):**
 
-.. image:: doc/source/_static/img/svg/doc_track_example.svg
+![track definition example](doc/source/_static/img/svg/doc_track_example.svg)
 
 **Track definition file (XML):**
 
-.. code:: xml
+```xml
     <TrackDefinition version="0.0.1">
         <Size width="5.0" height="6.0"/>
         <Origin x="0" y="0"/>
@@ -44,7 +44,7 @@ that follows:
             <Straight length="0.500"/>
         </Segments>
     </TrackDefinition>
-
+```
 
 
 Installation

@@ -1,4 +1,5 @@
 from pathlib import Path
+from track_generator import __version__
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -10,8 +11,8 @@ from pathlib import Path
 
 project = "Track Generator"
 copyright = "2023, twyleg"
-author = "NG:ITL"
-release = "0.1"
+author = "twyleg"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

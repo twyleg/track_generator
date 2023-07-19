@@ -13,6 +13,7 @@ set SOURCEDIR=source
 set BUILDDIR=build
 
 set PATH=.\drawio;%PATH%
+set PYTHONPATH=..\;%PYTHONPATH%
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (

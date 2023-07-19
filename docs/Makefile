@@ -9,6 +9,7 @@ SOURCEDIR     = source
 BUILDDIR      = build
 
 export PATH  := $(PATH):$(PWD)/drawio
+export PYTHONPATH  := $(PYTHONPATH):$(PWD)/../
 
 
 # Put it first so that "make" without argument is like "make help".

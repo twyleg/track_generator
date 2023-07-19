@@ -24,7 +24,10 @@ def subcommand_generate_track():
     parser.add_argument("--ground_truth", action="store_true", help="Generate ground truth data for track.")
     args = parser.parse_args(sys.argv[2:])
 
-    generator.generate_track(args.track_files, args.output, args.png, args.gazebo, args.ground_truth)
+    track_file_filepaths = [Path(filepath) for filepath in args.track_files]
+    output_dirpath = Path(args.output)
+
+    generator.generate_track(track_file_filepaths, output_dirpath, args.png, args.gazebo, args.ground_truth)
 
 
 def subcommand_generate_track_live():
@@ -42,7 +45,8 @@ def subcommand_generate_track_live():
     args = parser.parse_args(sys.argv[2:])
 
     track_filepath = Path(args.track_file)
-    generator.generate_track_live(track_filepath, args.output)
+    output_dirpath = Path(args.output)
+    generator.generate_track_live(track_filepath, output_dirpath)
 
 
 def subcommand_generate_trajectory():

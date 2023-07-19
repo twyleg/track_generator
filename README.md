@@ -1,74 +1,79 @@
-# Track Generator
+Track Generator
+===============
 
 Simple generator to create tracks (ground textures for vehicle simulations)
-from parametric descriptions.
+from a parametric description (XML).
 
-For example, the following parametric description of a track in XML will lead
-to the corresponding result:
-
-**Track definition (XML):**
-
-![track definition example](doc/img/png/track_definition_example_0.png)
+For example, the following track was generated based on the parametric description
+that follows:
 
 **Output (SVG, optional PNG):**
 
-![track output example](doc/img/png/track_output_example_0.png)
+![track definition example](docs/source/_static/img/svg/doc_track_example.svg)
 
-## Usage
+**Track definition file (XML):**
 
-Create a virtual environment
+```xml
+    <TrackDefinition version="0.0.1">
+        <Size width="5.0" height="6.0"/>
+        <Origin x="0" y="0"/>
+        <Background color="#545454" opacity="1.0"/>
+        <Segments>
+            <Start x="0.500" y="1.300" direction_angle="90.0"/>
+            <Straight length="1.000"/>
+            <ParkingArea length="2.200">
+                <RightLots>
+                    <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">
+                        <Spot type="free" length="0.4"/>
+                        <Spot type="blocked" length="0.4"/>
+                        <Spot type="occupied" length="0.4"/>
+                    </ParkingLot>
+                </RightLots>
+                <LeftLots>
+                </LeftLots>
+            </ParkingArea>
+            <Turn direction="right" radius="0.750" radian="90.0"/>
+            <Straight length="1.000"/>
+            <Crosswalk length="0.500"/>
+            <Straight length="1.000"/>
+            <Turn direction="right" radius="0.75" radian="135.0"/>
+            <Straight length="0.500"/>
+            <Intersection length="1.600" direction="straight"/>
+            <Turn direction="left" radius="0.800" radian="270.0"/>
+            <Gap length="1.600" direction="straight"/>
+            <Straight length="0.500"/>
+        </Segments>
+    </TrackDefinition>
+```
 
-    python -m venv venv
-    # Windows:
-    venv\Scripts\activate
-    # Linux (bash):
-    source venv/bin/activate
 
-Install via pip:
+Installation
+============
 
-    pip install track_generator
+    pip install track-generator
 
-Run:
+Usage
+=====
+
+Generate track
+--------------
 
     track_generator generate_track <TRACK_DEFINITION_FILE>
 
-## Setup dev environment
+Generate track live
+--------------
 
-### Clone project, setup venv and install requirements:
+    track_generator generate_track_live <TRACK_DEFINITION_FILE>
 
-    git clone git@github.com:twyleg/track_generator.git
-    cd track_generator/
-    python -m venv venv
-    source venv/bin/acitvate.bash
-    pip install -r requirements.txt
+Examples
+========
 
-### Run with example track definition:
+Examples that demonstrate the usage of the tool can be found in the
+[examples/](examples/) directory.
 
-    python track_generator/starter.py examples/track_files/simple_track_example.xml
+Documentation
+=============
 
-### Build software and binary distribution:
+Check the readthedocs site for more details:
 
-    python setup.py sdist bdist_wheel
-
-### Deploy
-
-TestPyPI:
-
-    python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-    
-PyPi:
-
-    python -m twine upload dist/*
-
-    
-
-## Coordinate systems
-
-Track generator uses a right hand side cartesian coorindate system internally. drawSvg on the other hand uses a
-left hand side cartesian coordinate system. This is important for internal operations but shouldn't bother the user.
-
-![coordiante systems](doc/img/svg/coordinate_systems.svg)
-
-## Examples
-
-Example track definitions can be found under [examples/](examples/)
+https://track-generator.readthedocs.io/en/latest/

@@ -3,7 +3,7 @@ run-name: code_checks
 on: [push]
 jobs:
   run-code_checks:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4

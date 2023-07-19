@@ -9,7 +9,7 @@ that follows:
 
 **Output (SVG, optional PNG):**
 
-![track definition example](doc/source/_static/img/svg/doc_track_example.svg)
+![track definition example](docs/source/_static/img/svg/doc_track_example.svg)
 
 **Track definition file (XML):**
 

@@ -6,7 +6,6 @@ from typing import List, Callable
 from track_generator import xml_reader
 from track_generator.painter import Painter
 from track_generator.gazebo_model_generator import GazeboModelGenerator
-from track_generator.gui.track_live_view import TrackLiveView
 from track_generator.ground_truth_generator import GroundTruthGenerator
 
 from watchdog.observers import Observer
@@ -92,7 +91,9 @@ def generate_track_live(track_file: Path, root_output_directory: Path) -> None:
     """
     track_file_directory = track_file.parent
     track_name = _get_track_name_from_file_path(track_file)
-    output_file_path = os.path.join(root_output_directory, track_name, f"{track_name}.svg")
+    output_file_path = root_output_directory / track_name / f"{track_name}.svg"
+    from track_generator.gui.track_live_view import TrackLiveView
+
     track_live_view = TrackLiveView(output_file_path)
 
     def update():

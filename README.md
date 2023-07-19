@@ -68,7 +68,8 @@ Generate track live
 Examples
 ========
 
-TODO
+Examples that demonstrate the usage of the tool can be found in the
+[examples/](examples/) directory.
 
 Documentation
 =============

@@ -15,7 +15,7 @@ that follows:
 
 **Output (SVG, optional PNG):**
 
-![track definition example](docs/source/_static/img/svg/doc_track_example.svg)
+![track definition example](https://raw.githubusercontent.com/twyleg/track_generator/master/docs/source/_static/img/svg/doc_track_example.svg)
 
 **Track definition file (XML):**
 
@@ -75,7 +75,7 @@ Examples
 ========
 
 Examples that demonstrate the usage of the tool can be found in the
-[examples/](examples/) directory.
+[examples/](https://github.com/twyleg/track_generator/tree/master/examples) directory.
 
 Documentation
 =============

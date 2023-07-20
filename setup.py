@@ -1,11 +1,13 @@
 # Copyright (C) 2022 twyleg
 import os
+from pathlib import Path
+
 import versioneer
 from setuptools import find_packages, setup
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return open(Path(__file__) / fname).read()
 
 
 setup(
@@ -21,7 +23,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     long_description=read("README.md"),
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     install_requires=[
         "pytransform3d~=3.2.0",
         "drawsvg~=2.2.0",

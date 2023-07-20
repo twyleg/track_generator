@@ -1,5 +1,4 @@
 # Copyright (C) 2022 twyleg
-import os
 from pathlib import Path
 
 import versioneer
@@ -7,7 +6,7 @@ from setuptools import find_packages, setup
 
 
 def read(fname):
-    return open(Path(__file__) / fname).read()
+    return open(Path(__file__).parent / fname).read()
 
 
 setup(

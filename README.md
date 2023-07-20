@@ -1,4 +1,8 @@
 [![Build status](https://github.com/twyleg/track_generator/actions/workflows/checks.yml/badge.svg)]()
+[![GitHub latest commit](https://badgen.net/github/last-commit/twyleg/track_generator)](https://GitHub.com/twyleg/track_generator/commit/)
+[![PyPI download month](https://img.shields.io/pypi/dm/track-generator)](https://pypi.python.org/pypi/track-generator/)
+[![PyPi version](https://badgen.net/pypi/v/track-generator/)](https://pypi.org/project/track-generator)
+[![Documentation Status](https://readthedocs.org/projects/track-generator/badge/?version=latest)](http://track-generator.readthedocs.io/?badge=latest)
 
 Track Generator
 ===============

@@ -1,3 +1,5 @@
+[![Build status](https://github.com/twyleg/track_generator/actions/workflows/checks.yml/badge.svg)]()
+
 Track Generator
 ===============
 

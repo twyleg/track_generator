@@ -25,7 +25,7 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[
         "pytransform3d~=3.2.0",
-        "drawsvg~=2.2.0",
+        "drawsvg[all]~=2.2.0",
         "watchdog~=3.0.0",
         "pyside6==6.4.0.1",
         "xmlschema~=2.3.1",

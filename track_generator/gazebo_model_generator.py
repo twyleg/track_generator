@@ -1,16 +1,14 @@
 # Copyright (C) 2022 twyleg
-import os
+import jinja2
 from pathlib import Path
 from track_generator.track import Track
-from string import Template
+
+
+FILE_DIRPATH = Path(__file__).parent
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
-
-def write(path, data):
-    return open(path, "w").write(data)
+    return open(FILE_DIRPATH / fname).read()
 
 
 class GazeboModelGenerator:
@@ -27,34 +25,42 @@ class GazeboModelGenerator:
         self.track_materials_scripts_directory.mkdir(parents=True, exist_ok=True)
         self.track_materials_textures_directory.mkdir(parents=True, exist_ok=True)
 
+        self.environment = jinja2.Environment(loader=jinja2.FileSystemLoader(FILE_DIRPATH / "gazebo_model_templates/"))
+
     def generate_track_material(self):
         assert self.track_materials_scripts_directory
-        template = Template(read("gazebo_model_templates/track.material.template"))
-        output = template.substitute(
-            material_name=f"{self.track_name}_material", texture_file_name=f"{self.track_name}.png"
-        )
-        write(self.track_materials_scripts_directory / "track.material", output)
+        template = self.environment.get_template("track.material.jinja")
+
+        material = {"name": f"{self.track_name}_material", "texture_file_name": f"{self.track_name}.png"}
+
+        with open(self.track_materials_scripts_directory / "track.material", "w") as output_file:
+            output_file.write(template.render(material=material))
 
     def generate_track_sdf(self, track: Track):
         assert self.track_directory
-        template = Template(read("gazebo_model_templates/model.sdf.template"))
-        output = template.substitute(name=self.track_name, width=track.width, height=track.height)
-        write(self.track_directory / "model.sdf", output)
+        template = self.environment.get_template("model.sdf.jinja")
+
+        model = {"name": self.track_name, "width": track.width, "height": track.height}
+
+        with open(self.track_directory / "model.sdf", "w") as output_file:
+            output_file.write(template.render(model=model))
 
     def generate_track_config(self, track: Track):
         assert self.track_directory
-        template = Template(read("gazebo_model_templates/model.config.template"))
-        output = template.substitute(
-            name=self.track_name,
-            version=track.version,
-            desc=self.track_name,
-        )
-        write(self.track_directory / "model.config", output)
+        template = self.environment.get_template("model.config.jinja")
+
+        model = {"name": self.track_name, "version": track.version, "desc": self.track_name}
+
+        with open(self.track_directory / "model.config", "w") as output_file:
+            output_file.write(template.render(model=model))
 
     def generate_setup_script(self):
         assert self.gazebo_models_directory
-        output = read("gazebo_model_templates/setup.bash.template")
-        write(self.gazebo_models_directory / "setup.bash", output)
+
+        template = self.environment.get_template("setup.bash.jinja")
+
+        with open(self.track_directory / "setup.bash", "w") as output_file:
+            output_file.write(template.render())
 
     def generate_gazebo_model(self, track: Track):
         self.generate_track_material()

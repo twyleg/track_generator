@@ -17,6 +17,8 @@ def get_track_file_examples() -> List[Path]:
 if __name__ == "__main__":
     output_directory = FILE_DIR / "output"
     track_files = get_track_file_examples()
-    track_output_directories = generate_track(track_files, output_directory, False, False)
+    track_output_directories = generate_track(
+        track_files, output_directory, generate_png=True, generate_gazebo_project=True, generate_ground_truth=True
+    )
     for track_output_directory in track_output_directories:
         print(track_output_directory)

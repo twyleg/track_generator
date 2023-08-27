@@ -37,41 +37,10 @@
 
         <model name='ground_plane'>
             <include>
-                <uri>model://big_track_example</uri>
+                <uri>model://{{ example.name }}</uri>
                 <pose>0 0 0 0 0 0</pose>
             </include>
         </model>
-
-        <!-- <model name="prius_hybrid"> -->
-        <!--     <static>true</static> -->
-        <!--     <pose>0 0 0  0 0 0</pose> -->
-        <!--     <link name="foo"> -->
-        <!--     <visual name="chassis_visual"> -->
-        <!--       <geometry> -->
-        <!--         <mesh> -->
-        <!--           <uri>model://ewolf/ewolf.obj</uri> -->
-        <!--           <scale>1.01 1.01 1.01</scale> -->
-        <!--         </mesh> -->
-        <!--       </geometry> -->
-        <!--   </visual> -->
-        <!--  -->
-        <!--         [> <visual name="visual"> <] -->
-        <!--         [>     <geometry> <] -->
-        <!--         [>       <box> <] -->
-        <!--         [>         <size>1 1 1</size> <] -->
-        <!--         [>       </box> <] -->
-        <!--         [>     </geometry> <] -->
-        <!--         [>   </visual> <] -->
-        <!--  -->
-        <!--         [> <collision name="collision"> <] -->
-        <!--         [>     <geometry> <] -->
-        <!--         [>       <box> <] -->
-        <!--         [>         <size>1 1 1</size> <] -->
-        <!--         [>       </box> <] -->
-        <!--         [>     </geometry> <] -->
-        <!--         [> </collision> <] -->
-        <!--     </link> -->
-        <!-- </model> -->
 
     </world>
 </sdf>

@@ -1,4 +1,4 @@
-material ${material_name}
+material {{ material.name }}
 {
     technique
     {
@@ -10,7 +10,7 @@ material ${material_name}
 
             texture_unit
             {
-                texture ${texture_file_name}
+                texture {{ material.texture_file_name }}
                 filtering trilinear
             }
         }

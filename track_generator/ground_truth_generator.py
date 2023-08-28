@@ -1,6 +1,6 @@
+# Copyright (C) 2023 Lukas Lange
 from pathlib import Path
-from xml.etree import cElementTree as ET, ElementTree
-from xml.etree import ElementTree
+from xml.etree import cElementTree as ET
 from xml.dom import minidom
 
 from track_generator.track import (

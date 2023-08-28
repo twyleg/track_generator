@@ -54,14 +54,6 @@ class GazeboModelGenerator:
         with open(self.track_directory / "model.config", "w") as output_file:
             output_file.write(template.render(model=model))
 
-    def generate_setup_script(self):
-        assert self.gazebo_models_directory
-
-        template = self.environment.get_template("setup.bash.jinja")
-
-        with open(self.track_directory / "setup.bash", "w") as output_file:
-            output_file.write(template.render())
-
     def generate_example_world(self, track: Track):
         assert self.track_directory
         template = self.environment.get_template("example.world.jinja")
@@ -71,6 +63,14 @@ class GazeboModelGenerator:
 
         with open(self.gazebo_models_directory / output_filename, "w") as output_file:
             output_file.write(template.render(example=example))
+
+    def generate_setup_script(self):
+        assert self.gazebo_models_directory
+
+        template = self.environment.get_template("setup.bash.jinja")
+
+        with open(self.gazebo_models_directory / "setup.bash", "w") as output_file:
+            output_file.write(template.render())
 
     def generate_gazebo_model(self, track: Track):
         self.generate_track_material()

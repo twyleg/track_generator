@@ -29,7 +29,7 @@ setup(
         "watchdog~=3.0.0",
         "pyside6>=6.2.4",
         "xmlschema~=2.3.1",
-        "jinja2~=3.1.2"
+        "jinja2~=3.1.2",
     ],
     entry_points={
         "console_scripts": [

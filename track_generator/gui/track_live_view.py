@@ -5,7 +5,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, Signal, Property
 
-
+BASE_DIR = Path(__file__).parent
 class TrackLiveView:
     class Model(QObject):
         def __init__(self, filename: str) -> None:
@@ -35,7 +35,7 @@ class TrackLiveView:
         self.model = TrackLiveView.Model(output_file_path)
 
         self.engine.rootContext().setContextProperty("model", self.model)
-        self.engine.load(os.fspath(Path(__file__).resolve().parent / "qml/track_live_view.qml"))
+        self.engine.load(BASE_DIR / "qml/track_live_view.qml")
 
     def update(self):
         self.model.reloadImage.emit()

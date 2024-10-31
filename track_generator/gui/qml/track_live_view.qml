@@ -1,4 +1,4 @@
-// Copyright (C) 2023 twyleg
+// Copyright (C) 2024 twyleg
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
@@ -26,7 +26,7 @@ Window {
 		function reload() {
 			console.log('Reloading image!')
 			source = ""
-			source = model.filename
+			source = "file://" + model.filename
 		}
 	}
 

@@ -17,7 +17,7 @@ def _create_output_directory_if_required(output_dirpath: Path):
     output_dirpath.mkdir(exist_ok=True)
 
 
-def _get_track_name_from_file_path(track_filepath: Path) -> str:
+def get_track_name_from_file_path(track_filepath: Path) -> str:
     filename = os.path.basename(track_filepath)
     filename_without_extension, _ = os.path.splitext(filename)
     return filename_without_extension
@@ -44,7 +44,7 @@ def generate_track(
         track = xml_reader.read_track(track_filepath)
         track.calc()
 
-        track_name = _get_track_name_from_file_path(track_filepath)
+        track_name = get_track_name_from_file_path(track_filepath)
         track_output_directory = root_output_dirpath / track_name
         _create_output_directory_if_required(track_output_directory)
         track_output_directories.append(track_output_directory)
@@ -85,7 +85,7 @@ class FileChangedHandler(FileSystemEventHandler):
         return None
 
 
-def generate_track_live(track_file: Path, root_output_directory: Path) -> None:
+def generate_track_live(track_file: Path, root_output_directory: Path, track_model) -> None:
     """
     Generate tracks (SVG, Gazebo project, etc) from given track files (XML)
     :param track_file: Track file
@@ -94,14 +94,15 @@ def generate_track_live(track_file: Path, root_output_directory: Path) -> None:
     :return: Output directory for the track
     """
     track_file_directory = track_file.parent
-    track_name = _get_track_name_from_file_path(track_file)
-    output_file_path = os.path.join(root_output_directory, track_name, f"{track_name}.svg")
-    track_live_view = TrackLiveView(output_file_path)
+    track_name = get_track_name_from_file_path(track_file)
+    root_output_directory.mkdir(exist_ok=True)
+    output_filepath = root_output_directory / track_name / f"{track_name}.svg"
+    # track_live_view = TrackLiveView(output_filepath)
 
     def update():
         print(f"Track file changed, regenerating track ({track_file})")
         generate_track([track_file], root_output_directory, generate_png=False, generate_gazebo_project=False)
-        track_live_view.update()
+        track_model.update()
 
     event_handler = FileChangedHandler(track_file, update)
 
@@ -111,7 +112,7 @@ def generate_track_live(track_file: Path, root_output_directory: Path) -> None:
     observer.schedule(event_handler, track_file_directory, recursive=False)
     observer.start()
 
-    track_live_view.run()
+    # track_live_view.run()
 
     observer.stop()
     observer.join()

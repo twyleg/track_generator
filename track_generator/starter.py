@@ -130,7 +130,7 @@ class GuiApplication(QmlApplication):
         print(f"Track file changed, regenerating track ({self.track_filepath})")
         generator.generate_track([self.track_filepath], self.output_directory, generate_png=False,
                                  generate_gazebo_project=False)
-        # self.track_model.reloadImage.emit()
+        self.track_model.reloadImage.emit()
 
     def run(self, args: argparse.Namespace):
         self.track_filepath = Path(args.track_file)

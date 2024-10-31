@@ -26,7 +26,7 @@ Window {
 		function reload() {
 			console.log('Reloading image!')
 			source = ""
-			source = "file://" + model.filename
+			source = model.filename
 		}
 	}
 

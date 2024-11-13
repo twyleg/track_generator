@@ -1,5 +1,6 @@
-from xml.etree import cElementTree as ET, ElementTree
-from xml.etree import ElementTree
+# Copyright (C) 2023 Lukas Lange
+from pathlib import Path
+from xml.etree import cElementTree as ET
 from xml.dom import minidom
 
 from track_generator.track import (
@@ -7,7 +8,7 @@ from track_generator.track import (
     Track,
     Start,
     Straight,
-    Arc,
+    Turn,
     Crosswalk,
     Intersection,
     Gap,
@@ -18,7 +19,7 @@ from track_generator.track import (
 
 
 class GroundTruthGenerator:
-    def __init__(self, track_name: str, output_directory: str):
+    def __init__(self, track_name: str, output_directory: Path):
         self.track_name = track_name
         self.output_directory = output_directory
         self.root = ET.Element("GroundTruth", {"version": "0.0.1"})
@@ -27,7 +28,7 @@ class GroundTruthGenerator:
     def generate_ground_truth(self, track: Track):
         for segment in track.segments:
             self.generate_segment(segment)
-        with open(self.output_directory + "ground_truth.xml", "w") as f:
+        with open(self.output_directory / "ground_truth.xml", "w") as f:
             f.write(minidom.parseString(ET.tostring(self.root, "utf-8")).toprettyxml(indent="\t"))
 
     def generate_segment(self, segment: Segment):
@@ -35,8 +36,8 @@ class GroundTruthGenerator:
             pass
         elif isinstance(segment, (Straight, ParkingArea, Gap, Crosswalk)):
             self.generate_straight(segment)
-        elif isinstance(segment, Arc):
-            self.generate_arc(segment)
+        elif isinstance(segment, Turn):
+            self.generate_turn(segment)
         elif isinstance(segment, Intersection):
             self.generate_intersection(segment)
         elif isinstance(segment, TrafficIsland):
@@ -53,7 +54,9 @@ class GroundTruthGenerator:
                 [segment.right_line_polygon[i].x_w, segment.right_line_polygon[i].y_w],
             )
 
-    def generate_arc(self, segment: Arc):
+    def generate_turn(self, segment: Turn):
+        assert segment.start_point_left
+        assert segment.start_point_right
         self.write_points(
             [segment.start_point_left.x_w, segment.start_point_left.y_w],
             [segment.start_point_right.x_w, segment.start_point_right.y_w],

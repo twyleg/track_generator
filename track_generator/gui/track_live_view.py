@@ -1,3 +1,4 @@
+# Copyright (C) 2022 twyleg
 import sys
 import os
 from pathlib import Path
@@ -8,31 +9,26 @@ from PySide6.QtCore import QObject, Signal, Property
 BASE_DIR = Path(__file__).parent
 class TrackLiveView:
     class Model(QObject):
-        def __init__(self, filename: str) -> None:
+        reloadImage = Signal()
+        filepath_changed = Signal()
+
+        def __init__(self, filepath: Path) -> None:
             QObject.__init__(self)
-            self._filename = filename
+            self._filepath = str(filepath)
 
-        def get_filename(self) -> str:
-            return self._filename
+        def get_filepath(self) -> str:
+            return self._filepath
 
-        def set_filename(self, filename: str) -> None:
-            self._filename = filename
-            self.filename_changed.emit()
+        def set_filepath(self, filepath: Path) -> None:
+            self._filepath = str(filepath)
+            self.filepath_changed.emit()
 
-        @Signal
-        def filename_changed(self) -> None:
-            pass
+        filepath = Property(str, get_filepath, set_filepath, notify=filepath_changed)  # type: ignore [arg-type]
 
-        @Signal
-        def reloadImage(self) -> None:
-            pass
-
-        filename = Property(str, get_filename, set_filename, notify=filename_changed)
-
-    def __init__(self, output_file_path: str):
+    def __init__(self, output_filepath: Path):
         self.app = QGuiApplication(sys.argv)
         self.engine = QQmlApplicationEngine()
-        self.model = TrackLiveView.Model(output_file_path)
+        self.model = TrackLiveView.Model(output_filepath)
 
         self.engine.rootContext().setContextProperty("model", self.model)
         self.engine.load(BASE_DIR / "qml/track_live_view.qml")

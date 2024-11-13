@@ -16,7 +16,7 @@ Window {
 		fillMode: Image.PreserveAspectFit
 		anchors.fill: parent
 		cache: false
-		source: model.filename
+		source: model.filepath
 		sourceSize.height: height
 		sourceSize.width: width
 
@@ -26,7 +26,7 @@ Window {
 		function reload() {
 			console.log('Reloading image!')
 			source = ""
-			source = "file://" + model.filename
+			source = model.filepath
 		}
 	}
 

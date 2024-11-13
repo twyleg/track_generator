@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <sdf version="1.4">
-<model name="${name}">
+<model name="{{ model.name }}">
   <static>true</static>
     <link name="link">
       <collision name="collision">
         <geometry>
           <plane>
             <normal>0 0 1</normal>
-            <size>${width} ${height}</size>
+            <size>{{ model.width }} {{ model.height }}</size>
           </plane>
         </geometry>
         <surface>
@@ -24,14 +24,14 @@
         <geometry>
           <plane>
             <normal>0 0 1</normal>
-            <size>${width} ${height}</size>
+            <size>{{ model.width }} {{ model.height }}</size>
         </plane>
         </geometry>
         <material>
           <script>
-            <uri>model://${name}/materials/scripts</uri>
-            <uri>model://${name}/materials/textures/</uri>
-            <name>${name}_material</name>
+            <uri>model://{{ model.name }}/materials/scripts</uri>
+            <uri>model://{{ model.name }}/materials/textures/</uri>
+            <name>{{ model.name }}_material</name>
           </script>
         </material>
       </visual>

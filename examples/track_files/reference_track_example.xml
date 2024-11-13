@@ -12,6 +12,7 @@
         <Turn direction="left" radius="0.800" radian="270.0"/>
         <Gap length="1.600" direction="straight"/>
         <ParkingArea length="4.0">
+            <Obstacle w="0.3" h="0.3" d="0.3" rot="45.0" lon_offset="0.5" lat_offset="0.0"/>
             <RightLots>
                 <ParkingLot start="0.0" depth="0.3" opening_ending_angle="60">
                     <Spot type="free" length="0.3"/>
@@ -42,7 +43,13 @@
         <Straight length="6.0"/>
         <Turn direction="right" radius="1.0" radian="90.0"/>
         <Straight length="6.3"/>
-        <Turn direction="right" radius="1.0" radian="90.0"/>
-        <Straight length="3.5"/>
+        <Turn direction="right" radius="1.0" radian="90.0">
+            <Obstacle w="0.3" h="0.3" d="0.3" rot="0.0" lon_offset="0.5" lat_offset="0.2"/>
+        </Turn>
+        <Straight length="3.5">
+            <Obstacle w="0.3" h="0.3" d="0.3" rot="45.0" lon_offset="0.5" lat_offset="0.0"/>
+            <Obstacle w="0.3" h="0.3" d="0.3" rot="10.0" lon_offset="1.0" lat_offset="-0.5"/>
+            <Obstacle w="0.3" h="0.3" d="0.3" rot="30.0" lon_offset="1.5" lat_offset="0.3"/>
+        </Straight>
     </Segments>
 </TrackDefinition>

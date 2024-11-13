@@ -3,10 +3,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QObject, Signal, Property, QUrl
+from PySide6.QtCore import QObject, Signal, QUrl
 from simple_python_app.subcommand_application import SubcommandApplication
 
 from simple_python_app_qt.qml_application import QmlApplication
+from simple_python_app_qt.property import Property, PropertyMeta
 from watchdog.observers import Observer
 
 from track_generator import __version__
@@ -74,27 +75,17 @@ FILE_DIR = Path(__file__).parent
 
 class GuiApplication(QmlApplication):
 
-    class Model(QObject):
-        def __init__(self, filename: str) -> None:
-            QObject.__init__(self)
-            self._filename = filename
+    class Model(QObject, metaclass=PropertyMeta):
+        filepath = Property(str)
 
-        def get_filename(self) -> str:
-            return self._filename
-
-        def set_filename(self, filename: str) -> None:
-            self._filename = filename
-            self.filename_changed.emit()
-
-        @Signal
-        def filename_changed(self) -> None:
-            pass
+        def __init__(self, filepath: str, parent: QObject | None = None) -> None:
+            QObject.__init__(self, parent)
+            self.filepath = filepath
 
         @Signal
         def reloadImage(self) -> None:
             pass
 
-        filename = Property(str, get_filename, set_filename, notify=filename_changed)
 
     def __init__(self):
         # fmt: off

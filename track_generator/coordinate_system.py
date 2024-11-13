@@ -2,7 +2,7 @@
 import numpy as np
 import pytransform3d.rotations as pyrot
 import pytransform3d.transformations as pytr
-from typing import Optional, List
+from typing import List, Union
 
 
 class WorldCoordinateSystem:
@@ -13,12 +13,18 @@ class WorldCoordinateSystem:
 
 
 class CartesianSystem2d:
-    def __init__(self, x: float, y: float, yaw: float, parent: Optional["CartesianSystem"] = WorldCoordinateSystem()):
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        yaw: float,
+        parent: Union["CartesianSystem2d", WorldCoordinateSystem] = WorldCoordinateSystem(),
+    ):
         p = np.array([x, y, 0.0])
         a = np.array([0.0, 0.0, 1.0, np.deg2rad(yaw)])
         local_to_parent = pytr.transform_from(pyrot.matrix_from_axis_angle(a), p)
         parent_to_world = parent.local_to_world
-        self.local_to_world = pytr.concat(local_to_parent, parent_to_world)
+        self.local_to_world: np.ndarray = pytr.concat(local_to_parent, parent_to_world)
 
 
 class Point2d:
@@ -38,7 +44,3 @@ class Point2d:
 
 
 Polygon = List[Point2d]
-
-# class Polygon(List[Point2d]):
-#     def __init__(self, *args):
-#         super().__init__(self, *args)

@@ -1,0 +1,21 @@
+name: Code Checks
+run-name: code_checks
+on: [push]
+jobs:
+  run-code_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: 'Install requirements'
+        run: pip install -r requirements.txt
+      - name: 'Run tests'
+        run: tox -e tests
+      - name: 'Run type cheks'
+        run: tox -e type
+      - name: 'Run type linter'
+        run: tox -e lint_check
+      - name: 'Run cli smoke test'
+        run: tox -e cli

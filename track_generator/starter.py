@@ -22,14 +22,11 @@ class GuiApplication(QmlApplication):
 
     class Model(QObject, metaclass=PropertyMeta):
         filepath = Property(str)
+        reload_image = Signal(name="reloadImage")
 
         def __init__(self, filepath: str, parent: QObject | None = None) -> None:
             QObject.__init__(self, parent)
-            self.filepath = filepath
-
-        @Signal
-        def reloadImage(self) -> None:
-            pass
+            self.filepath = filepath  # type: ignore
 
     class FilesystemWatcher(FileSystemEventHandler):
         def __init__(self, paths: List[Path]):
@@ -63,8 +60,7 @@ class GuiApplication(QmlApplication):
                 logging.debug("Detected updated event: %s", event.src_path)
                 self.callback()
 
-
-    def __init__(self):
+    def __init__(self) -> None:
         # fmt: off
         super().__init__(
             application_name="track_generator_gui",
@@ -75,8 +71,7 @@ class GuiApplication(QmlApplication):
         )
         # fmt: on
 
-        self.track_model: QObject | None = None
-
+        self.track_model: GuiApplication.Model | None = None
 
     def add_arguments(self, argparser: argparse.ArgumentParser):
 
@@ -98,7 +93,8 @@ class GuiApplication(QmlApplication):
         self.logm.info("Track file changed, regenerating track (%s)", self.track_filepath)
         generator.generate_track([self.track_filepath], self.output_directory, generate_png=False,
                                  generate_gazebo_project=False)
-        self.track_model.reloadImage.emit()
+        assert self.track_model
+        self.track_model.reload_image.emit()
 
     def run(self, args: argparse.Namespace):
         self.track_filepath = Path(args.track_file)

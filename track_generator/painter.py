@@ -42,8 +42,8 @@ class SvgPoint:
 
 
 class Painter:
-    def __init__(self):
-        self.d: Optional[draw.Drawing] = None
+    def __init__(self) -> None:
+        self.d: draw.Drawing | None = None
         self.dash_style = "stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0"
 
         self.default_track_background_style = {

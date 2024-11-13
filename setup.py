@@ -1,11 +1,12 @@
 # Copyright (C) 2024 twyleg
-import os
 import versioneer
 from setuptools import find_packages, setup
+from pathlib import Path
 
 
 def read(fname):
     return open(Path(__file__).parent / fname).read()
+
 
 # fmt: off
 setup(

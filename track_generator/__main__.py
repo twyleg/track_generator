@@ -1,4 +1,4 @@
 # Copyright (C) 2023 twyleg
-from track_generator.starter import start
+from track_generator.starter import start_cli
 
-start()
+start_cli()

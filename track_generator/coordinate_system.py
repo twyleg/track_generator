@@ -7,9 +7,7 @@ from typing import List, Union
 
 class WorldCoordinateSystem:
     def __init__(self):
-        self.local_to_world = pytr.transform_from(
-            pyrot.matrix_from_axis_angle(np.array([0.0, 0.0, 1.0, 0.0])), np.array([0.0, 0.0, 0.0])
-        )
+        self.local_to_world = pytr.transform_from(pyrot.matrix_from_axis_angle(np.array([0.0, 0.0, 1.0, 0.0])), np.array([0.0, 0.0, 0.0]))
 
 
 class CartesianSystem2d:
@@ -33,9 +31,7 @@ class Point2d:
         self.x_l = x_l
         self.y_l = y_l
 
-        point_world = pytr.transform(
-            self.local_coordinate_system.local_to_world, np.array([self.x_l, self.y_l, 0.0, 1.0])
-        )
+        point_world = pytr.transform(self.local_coordinate_system.local_to_world, np.array([self.x_l, self.y_l, 0.0, 1.0]))
         self.x_w = point_world[0]
         self.y_w = point_world[1]
 

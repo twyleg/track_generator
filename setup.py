@@ -24,13 +24,16 @@ setup(
     long_description=read("README.md"),
     install_requires=[
         "pytransform3d~=3.2.0",
-        "drawsvg==1.9",
+        "drawsvg[all]~=2.2.0",
         "watchdog~=3.0.0",
-        "simple-python-app-qt==0.0.4"
+        "xmlschema~=3.4.3",
+        "jinja2~=3.1.2",
+        "simple-python-app-qt~=0.1.0"
     ],
     entry_points={
         "console_scripts": [
-            "track_generator = track_generator.starter:main",
+            "track_generator = track_generator.starter:start",
+            "track_generator_gui = track_generator.gui.starter:start",
         ]
     },
 )

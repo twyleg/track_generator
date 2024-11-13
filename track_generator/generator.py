@@ -70,5 +70,6 @@ def generate_track(
             ground_truth_generator.generate_ground_truth(track)
     return track_output_directories
 
+
 def generate_trajectory():
     logm.warning("generate_trajectory not implemented yet")

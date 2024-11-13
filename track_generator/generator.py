@@ -1,5 +1,7 @@
 # Copyright (C) 2022 twyleg
 import os
+import logging
+
 from pathlib import Path
 from typing import List, Callable
 
@@ -8,8 +10,8 @@ from track_generator.painter import Painter
 from track_generator.gazebo_model_generator import GazeboModelGenerator
 from track_generator.ground_truth_generator import GroundTruthGenerator
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+
+logm = logging.getLogger(__name__)
 
 
 def _create_output_directory_if_required(output_dirpath: Path):
@@ -68,51 +70,5 @@ def generate_track(
             ground_truth_generator.generate_ground_truth(track)
     return track_output_directories
 
-
-class FileChangedHandler(FileSystemEventHandler):
-    def __init__(self, input_filepath: Path, callback: Callable):
-        self.input_filepath = input_filepath
-        self.callback = callback
-
-    def on_closed(self, event) -> None:
-        event_filepath = Path(event.src_path)
-        if event_filepath == self.input_filepath:
-            self.callback()
-        return None
-
-
-def generate_track_live(track_file: Path, root_output_directory: Path, track_model) -> None:
-    """
-    Generate tracks (SVG, Gazebo project, etc) from given track files (XML)
-    :param track_file: Track file
-    :param root_output_directory: The output directory to write results to. Subdirectories for every track will be
-    generated.
-    :return: Output directory for the track
-    """
-    track_file_directory = track_file.parent
-    track_name = get_track_name_from_file_path(track_file)
-    root_output_directory.mkdir(exist_ok=True)
-    output_filepath = root_output_directory / track_name / f"{track_name}.svg"
-    # track_live_view = TrackLiveView(output_filepath)
-
-    def update():
-        print(f"Track file changed, regenerating track ({track_file})")
-        generate_track([track_file], root_output_directory, generate_png=False, generate_gazebo_project=False)
-        track_model.update()
-
-    event_handler = FileChangedHandler(track_file, update)
-
-    update()
-
-    observer = Observer()
-    observer.schedule(event_handler, track_file_directory, recursive=False)
-    observer.start()
-
-    # track_live_view.run()
-
-    observer.stop()
-    observer.join()
-
-
 def generate_trajectory():
-    print("generate_trajectory not implemented yet")
+    logm.warning("generate_trajectory not implemented yet")

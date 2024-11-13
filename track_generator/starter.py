@@ -1,77 +1,22 @@
 # Copyright (C) 2024 twyleg
 import argparse
-import sys
+import logging
 from pathlib import Path
+from typing import List, Callable
 
 from PySide6.QtCore import QObject, Signal, QUrl
 from simple_python_app.subcommand_application import SubcommandApplication
 
 from simple_python_app_qt.qml_application import QmlApplication
 from simple_python_app_qt.property import Property, PropertyMeta
+from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from track_generator import __version__
 from track_generator import generator
-from track_generator.generator import FileChangedHandler
 
 FILE_DIR = Path(__file__).parent
 
-
-# def subcommand_generate_track():
-#     parser = argparse.ArgumentParser(description="Generates a track")
-#     parser.add_argument(
-#         "track_files", metavar="track_file", type=str, nargs="+", help="a track file (XML) to generate the track from"
-#     )
-#     parser.add_argument(
-#         "-o",
-#         "--output",
-#         dest="output",
-#         default=Path.cwd() / "output",
-#         help='Output directory for generated tracks. Default="./"',
-#     )
-#     parser.add_argument("--png", action="store_true", help="Generate output PNG (SVG only by default).")
-#     parser.add_argument("--gazebo", action="store_true", help="Generate Gazebo model for track.")
-#     parser.add_argument("--ground_truth", action="store_true", help="Generate ground truth data for track.")
-#     args = parser.parse_args(sys.argv[2:])
-#
-#     generator.generate_track(args.track_files, args.output, args.png, args.gazebo, args.ground_truth)
-#
-#
-# def subcommand_generate_track_live():
-#     parser = argparse.ArgumentParser(description="Generates a track")
-#     parser.add_argument(
-#         "track_file", metavar="track_file", type=str, help="a track file (XML) to generate the track from"
-#     )
-#     parser.add_argument(
-#         "-o",
-#         "--output",
-#         dest="output",
-#         default=Path.cwd() / "output",
-#         help='Output directory for generated tracks. Default="./"',
-#     )
-#     args = parser.parse_args(sys.argv[2:])
-#
-#     track_filepath = Path(args.track_file)
-#     generator.generate_track_live(track_filepath, args.output)
-#
-#
-# def subcommand_generate_trajectory():
-#     """TODO: Implement"""
-#     pass
-#
-#
-# def start():
-#     parser = argparse.ArgumentParser(usage="track_generator <command> [<args>] <track_file>")
-#     parser.add_argument("command", help="track_generator commands")
-#     parser.add_argument("-v", "--version", help="show version and exit", action="version", version=__version__)
-#     args = parser.parse_args(sys.argv[1:2])
-#
-#     if args.command == "generate_track":
-#         subcommand_generate_track()
-#     elif args.command == "generate_track_live":
-#         subcommand_generate_track_live()
-#     elif args.command == "generate_trajectory":
-#         subcommand_generate_trajectory()
 
 class GuiApplication(QmlApplication):
 
@@ -86,6 +31,38 @@ class GuiApplication(QmlApplication):
         def reloadImage(self) -> None:
             pass
 
+    class FilesystemWatcher(FileSystemEventHandler):
+        def __init__(self, paths: List[Path]):
+            self.observer = Observer()
+            self.paths = paths
+            self.callback: Callable[[], None] | None = None
+            logging.info("Filesystem Watcher created!")
+
+        def stop(self):
+            self.observer.stop()
+            try:
+                self.observer.join()
+                for directory_path in self.paths:
+                    logging.info("Filesystem Watcher stopped to watch at %s", directory_path)
+            except RuntimeError:
+                logging.info("Filesystem Watcher wasn't running!")
+            logging.info("Filesystem Watcher stopped!")
+
+        def start(self) -> None:
+            for path in self.paths:
+                dir_path =path if path.is_dir() else path.parent
+                self.observer.schedule(self, dir_path, recursive=True)
+                logging.info("FilesystemWatcher watching at %s", path)
+            self.observer.start()
+
+        def register_callback(self, callback: Callable[[], None]):
+            self.callback = callback
+
+        def on_any_event(self, event):
+            if event.event_type in ["updated", "modified"] and Path(event.src_path) in self.paths:
+                logging.debug("Detected updated event: %s", event.src_path)
+                self.callback()
+
 
     def __init__(self):
         # fmt: off
@@ -94,7 +71,7 @@ class GuiApplication(QmlApplication):
             version=__version__,
             application_config_init_enabled=False,
             logging_logfile_output_dir= Path.cwd() / "logs/",
-            frontend_qml_file_path=FILE_DIR / "gui/qml/track_live_view.qml"
+            frontend_qml_file_path=FILE_DIR / "frontend/qml/track_live_view.qml"
         )
         # fmt: on
 
@@ -117,15 +94,14 @@ class GuiApplication(QmlApplication):
             help='Output directory for generated tracks. Default="./"',
         )
 
-    def _update(self):
-        print(f"Track file changed, regenerating track ({self.track_filepath})")
+    def _update(self) -> None:
+        self.logm.info("Track file changed, regenerating track (%s)", self.track_filepath)
         generator.generate_track([self.track_filepath], self.output_directory, generate_png=False,
                                  generate_gazebo_project=False)
-        # self.track_model.reloadImage.emit()
+        self.track_model.reloadImage.emit()
 
     def run(self, args: argparse.Namespace):
         self.track_filepath = Path(args.track_file)
-
         self.output_directory = Path(args.output)
         self.output_directory.mkdir(exist_ok=True)
 
@@ -137,17 +113,13 @@ class GuiApplication(QmlApplication):
 
         self._update()
 
-        track_file_directory = self.track_filepath.parent
-        event_handler = FileChangedHandler(self.track_filepath, self._update)
-        observer = Observer()
-        observer.schedule(event_handler, track_file_directory, recursive=False)
-        observer.start()
+        filesystem_watcher = GuiApplication.FilesystemWatcher([self.track_filepath])
+        filesystem_watcher.register_callback(self._update)
+        filesystem_watcher.start()
 
         self.open()
 
-        observer.stop()
-        observer.join()
-
+        filesystem_watcher.stop()
 
 
 class CliApplication(SubcommandApplication):

@@ -1,4 +1,4 @@
-// Copyright (C) 2023 twyleg
+// Copyright (C) 2024 twyleg
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15

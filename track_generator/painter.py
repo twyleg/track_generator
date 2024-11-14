@@ -42,8 +42,8 @@ class SvgPoint:
 
 
 class Painter:
-    def __init__(self):
-        self.d: Optional[draw.Drawing] = None
+    def __init__(self) -> None:
+        self.d: draw.Drawing | None = None
         self.dash_style = "stroke-miterlimit:4;stroke-dasharray:0.16,0.16;stroke-dashoffset:0"
 
         self.default_track_background_style = {
@@ -240,9 +240,7 @@ class Painter:
         self.draw_straight(segment)
 
         for polygon in segment.outline_polygon:
-            self.draw_polygon(
-                polygon, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH
-            )
+            self.draw_polygon(polygon, fill=DEFAULT_TRACK_COLOR, stroke=DEFAULT_LINE_COLOR, stroke_width=DEFAULT_LINE_WIDTH)
 
         for polygon in segment.spot_seperator_polygons:
             self.draw_polygon(polygon, **self.default_outer_line_style)
@@ -320,9 +318,7 @@ class Painter:
             )
         elif isinstance(track.background, BackgroundImage):
             img = track.background
-            self.d.append(
-                draw.Image(img.x, img.y, img.width, img.height, img.filepath, embed=True, preserveAspectRatio="none")
-            )
+            self.d.append(draw.Image(img.x, img.y, img.width, img.height, img.filepath, embed=True, preserveAspectRatio="none"))
 
         for segment in track.segments:
             self.draw_segment(segment)

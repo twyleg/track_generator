@@ -83,9 +83,7 @@ class GroundTruthGenerator:
 
     def generate_clothoid(self, segment: Clothoid):
         for i, _ in enumerate(segment.lines[0]):
-            self.write_points(
-                [segment.lines[1][i].x_w, segment.lines[1][i].y_w], [segment.lines[2][i].x_w, segment.lines[2][i].y_w]
-            )
+            self.write_points([segment.lines[1][i].x_w, segment.lines[1][i].y_w], [segment.lines[2][i].x_w, segment.lines[2][i].y_w])
 
     def write_points(self, point_1: list, point_2: list):
         ET.SubElement(

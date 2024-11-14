@@ -131,10 +131,7 @@ class Straight(Segment):
         self.right_line_polygon: Polygon = []
 
     def __str__(self) -> str:
-        return (
-            f"Straight: sp={self.center_line_polygon[0]}, ep={self.center_line_polygon[0]},"
-            f" length={self.length}, direction_angle={self.direction_angle}"
-        )
+        return f"Straight: sp={self.center_line_polygon[0]}, ep={self.center_line_polygon[0]}," f" length={self.length}, direction_angle={self.direction_angle}"
 
     def calc(self, prev_segment) -> None:
         super().calc(prev_segment)
@@ -185,9 +182,7 @@ class Turn(Segment):
         center_offset = self.radius if self.direction_clockwise else -self.radius
 
         assert isinstance(self.start_coordinate_system, CartesianSystem2d)
-        center_coordinate_system = CartesianSystem2d(
-            0.0, -center_offset, signed_radian_angle, self.start_coordinate_system
-        )
+        center_coordinate_system = CartesianSystem2d(0.0, -center_offset, signed_radian_angle, self.start_coordinate_system)
         self.end_coordinate_system = CartesianSystem2d(0.0, center_offset, 0.0, center_coordinate_system)
 
         assert isinstance(self.start_coordinate_system, CartesianSystem2d)
@@ -436,12 +431,8 @@ class ParkingArea(Straight):
                     )
                     self.blocker_polygons.append(
                         [
-                            Point2d(
-                                lot.start + offset + spot.length, side_factor * LINE_OFFSET, start_coordinate_system
-                            ),
-                            Point2d(
-                                lot.start + offset, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system
-                            ),
+                            Point2d(lot.start + offset + spot.length, side_factor * LINE_OFFSET, start_coordinate_system),
+                            Point2d(lot.start + offset, side_factor * (LINE_OFFSET + lot.depth), start_coordinate_system),
                         ]
                     )
 
@@ -522,20 +513,14 @@ class TrafficIsland(Segment):
                 TRACK_WIDTH / 2 + self.island_width / 2,
                 self.start_coordinate_system,
             ),
-            Point2d(
-                2 * self.curve_segment_length + self.crosswalk_length, TRACK_WIDTH / 2, self.start_coordinate_system
-            ),
-            Point2d(
-                2 * self.curve_segment_length + self.crosswalk_length, -TRACK_WIDTH / 2, self.start_coordinate_system
-            ),
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, TRACK_WIDTH / 2, self.start_coordinate_system),
+            Point2d(2 * self.curve_segment_length + self.crosswalk_length, -TRACK_WIDTH / 2, self.start_coordinate_system),
             Point2d(
                 self.curve_segment_length + self.crosswalk_length,
                 -(TRACK_WIDTH / 2 + self.island_width / 2),
                 self.start_coordinate_system,
             ),
-            Point2d(
-                self.curve_segment_length, -(TRACK_WIDTH / 2 + self.island_width / 2), self.start_coordinate_system
-            ),
+            Point2d(self.curve_segment_length, -(TRACK_WIDTH / 2 + self.island_width / 2), self.start_coordinate_system),
             Point2d(0.0, -TRACK_WIDTH / 2, self.start_coordinate_system),
         ]
 
@@ -545,17 +530,13 @@ class TrafficIsland(Segment):
         self.crosswalk_lines_polygons = calc_crosswalk_lines(
             self.crosswalk_length,
             width,
-            CartesianSystem2d(
-                self.curve_segment_length, +(self.island_width / 2 + LINE_OFFSET / 2), 0.0, self.start_coordinate_system
-            ),
+            CartesianSystem2d(self.curve_segment_length, +(self.island_width / 2 + LINE_OFFSET / 2), 0.0, self.start_coordinate_system),
         )
 
         self.crosswalk_lines_polygons = self.crosswalk_lines_polygons + calc_crosswalk_lines(
             self.crosswalk_length,
             width,
-            CartesianSystem2d(
-                self.curve_segment_length, -(self.island_width / 2 + LINE_OFFSET / 2), 0.0, self.start_coordinate_system
-            ),
+            CartesianSystem2d(self.curve_segment_length, -(self.island_width / 2 + LINE_OFFSET / 2), 0.0, self.start_coordinate_system),
         )
 
     def calc(self, prev_segment):
@@ -599,16 +580,8 @@ class Clothoid(Segment):
         x = 0
         y = 0
         for loops in range(20):
-            x_ = (
-                toggle
-                * length ** (1 + 4 * loops)
-                / (self.a ** (4 * loops) * factorial(2 * loops) * (1 + 4 * loops) * 2 ** (2 * loops))
-            )
-            y_ = (
-                toggle
-                * length ** (3 + 4 * loops)
-                / (self.a ** (2 + 4 * loops) * factorial(1 + 2 * loops) * (3 + 4 * loops) * 2 ** (1 + 2 * loops))
-            )
+            x_ = toggle * length ** (1 + 4 * loops) / (self.a ** (4 * loops) * factorial(2 * loops) * (1 + 4 * loops) * 2 ** (2 * loops))
+            y_ = toggle * length ** (3 + 4 * loops) / (self.a ** (2 + 4 * loops) * factorial(1 + 2 * loops) * (3 + 4 * loops) * 2 ** (1 + 2 * loops))
             x += x_
             y += y_
             toggle *= -1
@@ -632,10 +605,7 @@ class Clothoid(Segment):
         arc_length_end = self.a * sqrt(2 * radians(self.angle_offset + self.angle))
         points = []
         distance = 0.04
-        l = [
-            i * distance
-            for i in range(self.get_int(arc_length_start / distance), self.get_int(arc_length_end / distance) + 1)
-        ]
+        l = [i * distance for i in range(self.get_int(arc_length_start / distance), self.get_int(arc_length_end / distance) + 1)]
         l.append(arc_length_end)
         for i in l:
             points.append(self.get_clothoid_point(i, direction))
@@ -668,9 +638,7 @@ class Clothoid(Segment):
             left_lane_points = self.get_inverted_points(left_lane_points)
             right_line_points = self.get_inverted_points(right_line_points)
 
-        self.end_coordinate_system = CartesianSystem2d(
-            middle_points[-1][0], middle_points[-1][1], self.angle * direction, self.start_coordinate_system
-        )
+        self.end_coordinate_system = CartesianSystem2d(middle_points[-1][0], middle_points[-1][1], self.angle * direction, self.start_coordinate_system)
 
         self.lines.append([Point2d(p[0], p[1], self.start_coordinate_system) for p in middle_points])
         self.lines.append([Point2d(p[0], p[1], self.start_coordinate_system) for p in left_lane_points])

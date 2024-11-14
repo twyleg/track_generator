@@ -1,3 +1,20 @@
-# Copyright (C) 2023 twyleg
+# Copyright (C) 2024 twyleg
+import pytest
 
-# TODO
+import logging
+from pathlib import Path
+
+
+#
+# General naming convention for unit tests:
+#               test_INITIALSTATE_ACTION_EXPECTATION
+#
+
+
+FILE_DIR = Path(__file__).parent
+
+
+class TestExample:
+    def test_ValidInput_Read_Success(self, caplog, tmp_path):
+        logging.info("Tmp path: %s", tmp_path)
+        assert 1 == 1
